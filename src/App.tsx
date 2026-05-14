@@ -2,6 +2,7 @@ import { Routes, Route, Navigate, useParams } from "react-router-dom";
 import { useAuth } from "./auth/AuthContext";
 import { SignIn } from "./auth/SignIn";
 import { Layout } from "./components/Layout";
+import { TermsGate } from "./components/TermsGate";
 import { HomePage } from "./pages/HomePage";
 import { GroupPage } from "./pages/GroupPage";
 import { RoadmapPage } from "./pages/RoadmapPage";
@@ -38,18 +39,20 @@ export const App = () => {
   if (!isAuthenticated) return <SignIn />;
   if (!loaded) return <LoadingScreen />;
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/groups/:groupId" element={<GroupPage />} />
-        <Route path="/teams/:teamId" element={<TeamsRedirect />} />
-        <Route path="/roadmaps/:roadmapId" element={<RoadmapPage />} />
-        <Route path="/trash" element={<TrashPage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/legal/privacy" element={<LegalPrivacyPage />} />
-        <Route path="/legal/terms" element={<LegalTermsPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Layout>
+    <TermsGate>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/groups/:groupId" element={<GroupPage />} />
+          <Route path="/teams/:teamId" element={<TeamsRedirect />} />
+          <Route path="/roadmaps/:roadmapId" element={<RoadmapPage />} />
+          <Route path="/trash" element={<TrashPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/legal/privacy" element={<LegalPrivacyPage />} />
+          <Route path="/legal/terms" element={<LegalTermsPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Layout>
+    </TermsGate>
   );
 };

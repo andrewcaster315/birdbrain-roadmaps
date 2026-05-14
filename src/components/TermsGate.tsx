@@ -1,0 +1,121 @@
+// Click-through Terms / Privacy acceptance gate. Renders after the auth gate
+// but before the main app whenever the signed-in user has not yet accepted
+// the current CURRENT_TERMS_VERSION. On accept, writes the version + a
+// timestamp to the user row (with an audit entry) and lets the app render.
+
+import { useState, type ReactNode } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+import { useData } from "../data/DataContext";
+import { CURRENT_TERMS_VERSION } from "../types";
+import styles from "./TermsGate.module.css";
+
+export const TermsGate = ({ children }: { children: ReactNode }) => {
+  const { currentUser, setCurrentUser, signOut } = useAuth();
+  const { service } = useData();
+  const [agreed, setAgreed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  if (!currentUser) return <>{children}</>;
+  if (currentUser.termsVersionAccepted === CURRENT_TERMS_VERSION) {
+    return <>{children}</>;
+  }
+
+  const onAccept = async () => {
+    if (!agreed || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const updated = service.recordTermsAcceptance(
+        currentUser.id,
+        CURRENT_TERMS_VERSION
+      );
+      setCurrentUser(updated);
+    } catch (err) {
+      setError((err as Error).message);
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className={styles.wrap}>
+      <div className={styles.card}>
+        <h1 className={styles.title}>Before you get started</h1>
+        <p className={styles.lede}>
+          Birdbrain Roadmaps is a free, open-source side project. Please take a
+          minute to review how it works before you continue.
+        </p>
+
+        <ul className={styles.bullets}>
+          <li>
+            <strong>This is not a HIPAA-compliant system.</strong> Do not enter
+            patient information, medical records, or any data subject to HIPAA
+            or similar regulations. Use it for product and project planning
+            only.
+          </li>
+          <li>
+            <strong>Best-effort service, no warranty.</strong> It may have
+            bugs, lose data, or become unavailable. Don't store anything here
+            you can't afford to lose.
+          </li>
+          <li>
+            <strong>Your content is yours.</strong> You can export or delete
+            your data from inside the app at any time.
+          </li>
+          <li>
+            <strong>You're agreeing to the full policies below.</strong> The
+            bullets above are a summary, not the whole story.
+          </li>
+        </ul>
+
+        <p className={styles.links}>
+          <Link to="/legal/privacy" target="_blank" rel="noreferrer">
+            Privacy Policy ↗
+          </Link>
+          <span aria-hidden="true"> · </span>
+          <Link to="/legal/terms" target="_blank" rel="noreferrer">
+            Terms of Use ↗
+          </Link>
+        </p>
+
+        <label className={styles.checkRow}>
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            disabled={submitting}
+          />
+          <span>
+            I have read and agree to the Privacy Policy and Terms of Use.
+          </span>
+        </label>
+
+        {error && (
+          <div className={styles.error} role="alert">
+            {error}
+          </div>
+        )}
+
+        <div className={styles.actions}>
+          <button
+            type="button"
+            className={styles.secondary}
+            onClick={signOut}
+            disabled={submitting}
+          >
+            Sign out
+          </button>
+          <button
+            type="button"
+            className={styles.primary}
+            onClick={onAccept}
+            disabled={!agreed || submitting}
+          >
+            {submitting ? "Saving…" : "Accept and continue"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};

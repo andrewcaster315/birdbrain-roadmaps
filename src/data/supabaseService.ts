@@ -40,6 +40,8 @@ const rowToUser = (r: any): User => ({
   id: r.id,
   email: r.email,
   displayName: r.display_name,
+  termsVersionAccepted: r.terms_version_accepted ?? null,
+  termsAcceptedAt: r.terms_accepted_at ?? null,
   createdAt: r.created_at,
   updatedAt: r.updated_at,
   deletedAt: r.deleted_at,
@@ -557,6 +559,35 @@ export class SupabaseService implements DataService {
           .from("users")
           .update({ display_name: next.displayName })
           .eq("id", id)
+          .then(({ error }) => ({ error }))
+    );
+  }
+  recordTermsAcceptance(userId: ID, version: string): User {
+    const cur = this.byId(this.snap.users, userId);
+    if (!cur) throw new Error("User not found.");
+    if (cur.termsVersionAccepted === version) return cur;
+    const acceptedAt = nowISO();
+    const next: User = {
+      ...cur,
+      termsVersionAccepted: version,
+      termsAcceptedAt: acceptedAt,
+    };
+    return this.mutate(
+      () => {
+        this.snap = { ...this.snap, users: this.replace(this.snap.users, next) };
+        return next;
+      },
+      () => {
+        this.snap = { ...this.snap, users: this.replace(this.snap.users, cur) };
+      },
+      () =>
+        this.supabase
+          .from("users")
+          .update({
+            terms_version_accepted: version,
+            terms_accepted_at: acceptedAt,
+          })
+          .eq("id", userId)
           .then(({ error }) => ({ error }))
     );
   }

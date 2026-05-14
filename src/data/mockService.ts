@@ -58,6 +58,11 @@ const ensureShape = (raw: any): DataSnapshot => {
           : (typeof p.position === "number" ? p.position + 1 : 1),
       ...p,
     })),
+    users: (raw.users ?? []).map((u: any) => ({
+      termsVersionAccepted: u.termsVersionAccepted ?? null,
+      termsAcceptedAt: u.termsAcceptedAt ?? null,
+      ...u,
+    })),
   };
 };
 
@@ -316,6 +321,8 @@ export const mockService: DataService = {
       id: newId(),
       email: e,
       displayName: displayName?.trim() || displayNameFromEmail(e),
+      termsVersionAccepted: null,
+      termsAcceptedAt: null,
       createdAt: nowISO(),
       updatedAt: nowISO(),
       deletedAt: null,
@@ -336,6 +343,28 @@ export const mockService: DataService = {
     snap = { ...snap, users: replace(snap.users, next) };
     const changes = diff(cur, next, ["displayName"]);
     if (changes) audit("user", id, "updated", `Updated user ${next.displayName}`, actorId, changes);
+    persist();
+    return next;
+  },
+  recordTermsAcceptance(userId, version) {
+    const cur = byId(snap.users, userId);
+    if (!cur) throw new Error("User not found.");
+    if (cur.termsVersionAccepted === version) return cur;
+    const next: User = {
+      ...cur,
+      termsVersionAccepted: version,
+      termsAcceptedAt: nowISO(),
+      updatedAt: nowISO(),
+    };
+    snap = { ...snap, users: replace(snap.users, next) };
+    audit(
+      "user",
+      userId,
+      "updated",
+      `Accepted terms version ${version}`,
+      userId,
+      { termsVersionAccepted: { from: cur.termsVersionAccepted, to: version } }
+    );
     persist();
     return next;
   },

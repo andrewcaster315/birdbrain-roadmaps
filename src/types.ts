@@ -28,10 +28,19 @@ export interface User {
   id: ID;
   email: string;
   displayName: string;
+  // Which version of the Privacy Policy + Terms of Use the user has agreed
+  // to, and when. Null = never accepted; will be prompted on next sign-in.
+  termsVersionAccepted: string | null;
+  termsAcceptedAt: string | null;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
 }
+
+// Bump this when material changes are made to the Privacy Policy or Terms
+// of Use. Users whose stored value doesn't match are re-prompted on next
+// page load to re-accept. Match the "Last updated" date in LegalPages.tsx.
+export const CURRENT_TERMS_VERSION = "2026-05-14";
 
 export interface Group {
   id: ID;

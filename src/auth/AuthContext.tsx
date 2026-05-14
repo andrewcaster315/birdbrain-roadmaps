@@ -50,6 +50,10 @@ type Ctx = {
   ) => Promise<{ email: string; token: string | null }>;
   consumeMagicLink: (token: string) => Promise<User>;
   signOut: () => Promise<void>;
+  // Update the cached current user — used by flows that mutate the user
+  // row (e.g. accepting terms) so the gate condition recomputes without a
+  // full refresh.
+  setCurrentUser: (user: User) => void;
 };
 
 const AuthContext = createContext<Ctx | null>(null);
@@ -103,6 +107,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           id: row.id,
           email: row.email,
           displayName: row.display_name,
+          termsVersionAccepted: row.terms_version_accepted ?? null,
+          termsAcceptedAt: row.terms_accepted_at ?? null,
           createdAt: row.created_at,
           updatedAt: row.updated_at,
           deletedAt: row.deleted_at,
@@ -194,6 +200,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         requestMagicLink,
         consumeMagicLink,
         signOut,
+        setCurrentUser,
       }}
     >
       {children}

@@ -50,6 +50,8 @@ export const buildSeed = (): DataSnapshot => {
     id: newId(),
     email,
     displayName,
+    termsVersionAccepted: null,
+    termsAcceptedAt: null,
     createdAt: nowISO(),
     updatedAt: nowISO(),
     deletedAt: null,

@@ -1,0 +1,114 @@
+.wrap {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--color-bg);
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 28px;
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow-lg);
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--color-primary);
+}
+
+.lede {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.bullets {
+  margin: 4px 0 4px 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text);
+}
+.bullets li { line-height: 1.45; }
+
+.links {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+}
+.links a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+.links a:hover { color: var(--color-primary-hover); }
+
+.checkRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--color-text);
+  cursor: pointer;
+}
+.checkRow input[type="checkbox"] {
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.error {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.primary {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.primary:hover:not(:disabled) { background: var(--color-primary-hover); }
+.primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.primary:focus-visible { outline: 2px solid var(--color-text); outline-offset: 2px; }
+
+.secondary {
+  background: #fff;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.secondary:hover:not(:disabled) { background: var(--color-bg); }
+.secondary:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
