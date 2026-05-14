@@ -110,14 +110,29 @@ export const LegalPrivacyPage = () => (
         .
       </li>
       <li>
-        <strong>Resend, Inc.</strong> — delivers sign-in and notification
-        emails. See{" "}
+        <strong>Resend, Inc.</strong> — delivers sign-in emails. See{" "}
         <a
           href="https://resend.com/legal/privacy-policy"
           target="_blank"
           rel="noreferrer"
         >
           resend.com/legal/privacy-policy
+        </a>
+        .
+      </li>
+      <li>
+        <strong>Functional Software, Inc. (Sentry)</strong> — receives
+        anonymous error reports (stack traces and your user ID, but{" "}
+        <em>not</em> your email or name) when something in the app crashes.
+        We use this to find and fix bugs. Stack traces may include
+        user-entered text such as item titles or notes — another reason not
+        to put sensitive data into the app. See{" "}
+        <a
+          href="https://sentry.io/privacy/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          sentry.io/privacy
         </a>
         .
       </li>
@@ -129,9 +144,16 @@ export const LegalPrivacyPage = () => (
 
     <h2 className={styles.section}>Where your data lives</h2>
     <p>
-      All data is hosted in the United States. Connections to the application
-      use HTTPS (encrypted in transit). Database storage is encrypted at rest
-      by Supabase.
+      All application data is hosted in the United States by Supabase
+      (servers in Virginia). Connections to the application use HTTPS
+      (encrypted in transit). Database storage is encrypted at rest by
+      Supabase.
+    </p>
+    <p>
+      The operator (data controller) is an individual based in the United
+      States, relocating to the Republic of Korea. Administrative access to
+      operate the service may occur from Korea. The data itself does not
+      leave the US-region Supabase infrastructure.
     </p>
 
     <h2 className={styles.section}>Healthcare data — important</h2>
@@ -146,27 +168,53 @@ export const LegalPrivacyPage = () => (
 
     <h2 className={styles.section}>Cookies and local storage</h2>
     <p>
-      This site does not use cookies for tracking. A small piece of data is
-      stored in your browser's localStorage to keep you signed in for seven
-      days after you click your magic link. You can clear this at any time via
-      your browser settings.
+      This site does not use cookies or local storage for tracking or
+      advertising. We do use a few small entries in your browser's
+      localStorage:
+    </p>
+    <ul>
+      <li>
+        Your sign-in session (issued by Supabase Auth, valid for seven days).
+      </li>
+      <li>
+        A flag remembering whether you've dismissed the "Getting started"
+        tips card.
+      </li>
+      <li>
+        Supabase Auth's own internal entries for token refresh.
+      </li>
+    </ul>
+    <p>
+      You can clear any of these at any time via your browser settings.
+      Clearing them will sign you out and reset the dismissed-tips flag, but
+      no roadmap content is lost.
+    </p>
+
+    <h2 className={styles.section}>Audit log retention</h2>
+    <p>
+      Every create, update, and delete action is recorded in an internal
+      audit log so changes can be reviewed and reversed. Audit entries are
+      retained indefinitely for the life of the service and are not
+      purged when an item is deleted. If you request account deletion (see
+      below), your audit entries are anonymized — your user ID is removed —
+      but the action records themselves persist.
     </p>
 
     <h2 className={styles.section}>Your rights</h2>
     <p>
-      You can view, edit, or delete any roadmap or item from inside the app at
-      any time. You can export your data via the Admin page. You can request
-      that your account and all associated content be permanently deleted by
-      emailing the address below; deletion requests are honored within 30
-      days. Note that backups may retain your data for up to 90 additional
-      days before being purged.
+      You can view, edit, or delete any roadmap or item from inside the app
+      at any time. Admin users can export all data via the Admin page. You
+      can request that your account and associated content be deleted by
+      emailing the address below. Account deletion is currently a manual
+      process; we aim to honor requests within 30 days. Backups may retain
+      your data for up to 90 additional days before being purged.
     </p>
 
     <h2 className={styles.section}>Changes</h2>
     <p>
-      If this policy changes, the "Last updated" date will change and the new
-      text will be posted here. For material changes, you will see a banner
-      the next time you sign in.
+      If this policy changes, the "Last updated" date will change and the
+      new text will be posted here. For material changes you'll be
+      re-prompted to accept the updated terms the next time you sign in.
     </p>
 
     <h2 className={styles.section}>Contact</h2>
@@ -212,6 +260,15 @@ export const LegalTermsPage = () => (
       architecture. In that event, each tenant's data will remain isolated
       from every other tenant's data, accessible only to members of that
       tenant.
+    </p>
+    <p>
+      <strong>Not endorsed by NYU Langone Health.</strong> Birdbrain
+      Roadmaps is operated by an individual on a personal basis. It is not
+      endorsed by, contracted with, owned by, or covered under any
+      enterprise agreement, security review, or vendor relationship with
+      NYU Langone Health or any other organization. Your use of this
+      service is voluntary and does not extend any rights or obligations
+      between you and your employer.
     </p>
 
     <h2 className={styles.section}>Who can use it</h2>

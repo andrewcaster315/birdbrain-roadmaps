@@ -14,6 +14,32 @@ const MONTHS = [
 ];
 
 export const AdminPage = () => {
+  const { currentUser } = useAuth();
+  // Non-admins see a friendly explanation instead of the (server-side-blocked)
+  // write controls. Defense in depth: the RLS policies on the settings table
+  // also reject non-admin writes, but hiding the UI avoids confusing errors.
+  if (!currentUser?.isAdmin) {
+    return (
+      <div className={styles.wrap}>
+        <h1 className={styles.title}>Admin</h1>
+        <div className={styles.empty}>
+          <p>
+            <strong>Admin access only.</strong> Settings on this page —
+            fiscal year, allowed email domains, statuses, organization name —
+            are managed by a workspace admin.
+          </p>
+          <p style={{ marginTop: 12 }}>
+            If you need a setting changed, contact your workspace
+            administrator or email{" "}
+            <a href="mailto:support@birdbrain.tools">
+              support@birdbrain.tools
+            </a>
+            .
+          </p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className={styles.wrap}>
       <h1 className={styles.title}>Admin</h1>

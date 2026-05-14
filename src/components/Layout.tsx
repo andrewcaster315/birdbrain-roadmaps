@@ -47,14 +47,16 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           >
             Trash
           </NavLink>
-          <NavLink
-            to="/admin"
-            className={({ isActive }) =>
-              isActive ? styles.navLinkActive : styles.navLink
-            }
-          >
-            Admin
-          </NavLink>
+          {currentUser?.isAdmin && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                isActive ? styles.navLinkActive : styles.navLink
+              }
+            >
+              Admin
+            </NavLink>
+          )}
         </nav>
         <div className={styles.right}>
           {currentUser && (

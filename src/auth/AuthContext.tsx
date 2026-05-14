@@ -156,6 +156,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           id: row.id,
           email: row.email,
           displayName: row.display_name,
+          isAdmin: row.is_admin === true,
           termsVersionAccepted: row.terms_version_accepted ?? null,
           termsAcceptedAt: row.terms_accepted_at ?? null,
           createdAt: row.created_at,
@@ -163,7 +164,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           deletedAt: row.deleted_at,
         };
         setCurrentUser(userObj);
-        Sentry.setUser({ id: userObj.id, email: userObj.email });
+        // Only send the opaque user ID to Sentry — never email/name/PII.
+        // Email is sensitive in a healthcare-org context and we shouldn't
+        // export it to a third-party error tracker.
+        Sentry.setUser({ id: userObj.id });
         setExpiresAt((session.expires_at ?? 0) * 1000);
         setAuthResolved(true);
       };

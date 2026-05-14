@@ -32,6 +32,10 @@ export interface User {
   id: ID;
   email: string;
   displayName: string;
+  // Admins can change global settings (allowed email domains, statuses,
+  // fiscal year start). Non-admins see those controls as read-only.
+  // Enforced server-side via RLS on the settings table.
+  isAdmin: boolean;
   // Which version of the Privacy Policy + Terms of Use the user has agreed
   // to, and when. Null = never accepted; will be prompted on next sign-in.
   termsVersionAccepted: string | null;

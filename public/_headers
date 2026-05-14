@@ -1,0 +1,16 @@
+# HTTP response headers applied to every static asset served by the
+# Cloudflare Worker. Defensive hardening against common web attacks.
+#
+# CSP allows: self for everything; Supabase API + Resend SMTP destinations
+# for connect-src; Sentry's ingest for error reporting; data: for the
+# favicon-disabling trick. Inline scripts are NOT allowed.
+#
+# Adjust if you add another third-party (e.g. analytics, a new font CDN).
+
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.ingest.sentry.io https://*.ingest.us.sentry.io; frame-ancestors 'none'; base-uri 'self'; form-action 'self'

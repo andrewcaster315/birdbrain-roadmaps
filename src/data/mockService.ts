@@ -60,6 +60,7 @@ const ensureShape = (raw: any): DataSnapshot => {
     })),
     users: (raw.users ?? []).map((u: any) => ({
       ...u,
+      isAdmin: typeof u.isAdmin === "boolean" ? u.isAdmin : false,
       termsVersionAccepted: u.termsVersionAccepted ?? null,
       termsAcceptedAt: u.termsAcceptedAt ?? null,
     })),
@@ -333,6 +334,10 @@ export const mockService: DataService = {
       id: newId(),
       email: e,
       displayName: displayName?.trim() || displayNameFromEmail(e),
+      // First mock user signing in gets admin so they can configure the
+      // tool. Subsequent users are non-admin by default; promote via the
+      // admin page (or, for Supabase, the SQL editor).
+      isAdmin: snap.users.length === 0,
       termsVersionAccepted: null,
       termsAcceptedAt: null,
       createdAt: nowISO(),

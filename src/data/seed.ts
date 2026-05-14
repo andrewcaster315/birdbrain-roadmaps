@@ -46,10 +46,11 @@ export const buildSeed = (): DataSnapshot => {
   const inProg = statuses.find((s) => s.name === "In Progress")!.name;
 
   // Users
-  const u = (email: string, displayName: string): User => ({
+  const u = (email: string, displayName: string, isAdmin = false): User => ({
     id: newId(),
     email,
     displayName,
+    isAdmin,
     termsVersionAccepted: null,
     termsAcceptedAt: null,
     createdAt: nowISO(),
@@ -61,7 +62,8 @@ export const buildSeed = (): DataSnapshot => {
   const jordan = u("jordan@example.com", "Jordan Lee");
   const sam = u("sam@example.com", "Sam Patel");
   const riley = u("riley@example.com", "Riley Chen");
-  const morgan = u("morgan@example.com", "Morgan Hayes");
+  // Morgan is the seed admin so the AdminPage is usable on first sign-in.
+  const morgan = u("morgan@example.com", "Morgan Hayes", true);
   const users = [alex, priya, jordan, sam, riley, morgan];
 
   // Groups

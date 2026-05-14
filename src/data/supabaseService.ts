@@ -40,6 +40,7 @@ const rowToUser = (r: any): User => ({
   id: r.id,
   email: r.email,
   displayName: r.display_name,
+  isAdmin: r.is_admin === true,
   termsVersionAccepted: r.terms_version_accepted ?? null,
   termsAcceptedAt: r.terms_accepted_at ?? null,
   createdAt: r.created_at,

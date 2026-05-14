@@ -31,13 +31,41 @@ const supabaseService =
 // Surface background save failures as a toast (instead of the default
 // browser alert). The service does optimistic updates, so without this the
 // user has no visible signal when a write fails server-side.
+//
+// Raw Postgres error messages can leak schema/RLS structure — keep the full
+// message in console + Sentry for debugging, but show the user a generic
+// version with hints for the common cases.
+const userFacingError = (message: string): string => {
+  const m = message.toLowerCase();
+  if (
+    m.includes("row-level security") ||
+    m.includes("policy") ||
+    m.includes("permission")
+  ) {
+    return "You don't have permission to make that change.";
+  }
+  if (m.includes("violates check constraint") && m.includes("len")) {
+    return "That value is too long. Try shortening it.";
+  }
+  if (m.includes("duplicate key") || m.includes("unique constraint")) {
+    return "That name is already in use. Pick a different one.";
+  }
+  if (m.includes("foreign key") || m.includes("violates")) {
+    return "That change conflicts with related data. Refresh and try again.";
+  }
+  if (m.includes("network") || m.includes("fetch")) {
+    return "Network problem — check your connection and try again.";
+  }
+  return "Couldn't save your change. Try again, or refresh if it persists.";
+};
+
 if (supabaseService) {
   supabaseService.onError = (message) => {
     console.error("[SupabaseService]", message);
     Sentry.captureMessage(message, "error");
     pushToast({
       kind: "error",
-      message: `Couldn't save — ${message}`,
+      message: userFacingError(message),
     });
   };
 }
