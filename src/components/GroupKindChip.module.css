@@ -21,9 +21,9 @@
   appearance: none;
 }
 
-/* AA-compliant text/background pairs */
-.team { background: #dbeafe; color: #1e40af; }            /* blue-100 / blue-800 */
-.program { background: #ede9fe; color: #5b21b6; }         /* purple-100 / purple-800 */
-.leadership { background: #fef3c7; color: #92400e; }      /* amber-100 / amber-800 */
-.department { background: #e2e8f0; color: #1f2937; }      /* slate-200 / slate-800 */
-.initiative { background: #ccfbf1; color: #115e59; }      /* teal-100 / teal-800 */
+/* Neutral palette — kind is informational, not categorical-color-coded. */
+.team { background: var(--color-bg); color: var(--color-text-muted); border-color: var(--color-border); }
+.program { background: var(--color-bg); color: var(--color-text-muted); border-color: var(--color-border); }
+.leadership { background: var(--color-bg); color: var(--color-text-muted); border-color: var(--color-border); }
+.department { background: var(--color-bg); color: var(--color-text-muted); border-color: var(--color-border); }
+.initiative { background: var(--color-bg); color: var(--color-text-muted); border-color: var(--color-border); }

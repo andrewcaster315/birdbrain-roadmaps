@@ -24,7 +24,7 @@
 }
 
 .section {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -67,13 +67,13 @@
 }
 
 .welcome {
-  background: linear-gradient(135deg, #fff, #f3f6fb);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 36px 32px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   align-items: flex-start;
   box-shadow: var(--shadow-sm);
 }

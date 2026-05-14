@@ -3,6 +3,7 @@ import { type ReactNode } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { useData } from "../data/DataContext";
 import { confirmDialog } from "./ConfirmDialog";
+import { pushToast } from "./Toaster";
 import styles from "./Layout.module.css";
 
 const formatExpiry = (ts: number | null): string => {
@@ -15,7 +16,7 @@ const formatExpiry = (ts: number | null): string => {
 };
 
 export const Layout = ({ children }: { children: ReactNode }) => {
-  const { signOut, expiresAt, currentUser } = useAuth();
+  const { signOut, expiresAt, currentUser, isMockAuth } = useAuth();
   const { service } = useData();
   const settings = service.getSettings();
 
@@ -64,20 +65,32 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           <span className={styles.session} aria-live="polite">
             {formatExpiry(expiresAt)}
           </span>
-          <button
-            className={styles.linkButton}
-            onClick={async () => {
-              const ok = await confirmDialog({
-                title: "Reset all data to the demo seed?",
-                confirmLabel: "Reset",
-                variant: "danger",
-              });
-              if (ok) service.resetToSeed();
-            }}
-            title="Reset to demo data"
-          >
-            Reset demo
-          </button>
+          {/* Reset demo only makes sense against the local mock service.
+              In Supabase mode it throws and would only confuse PMs. */}
+          {isMockAuth && (
+            <button
+              className={styles.linkButton}
+              onClick={async () => {
+                const ok = await confirmDialog({
+                  title: "Reset all data to the demo seed?",
+                  confirmLabel: "Reset",
+                  variant: "danger",
+                });
+                if (!ok) return;
+                try {
+                  service.resetToSeed();
+                } catch (err) {
+                  pushToast({
+                    kind: "error",
+                    message: `Couldn't reset: ${(err as Error).message}`,
+                  });
+                }
+              }}
+              title="Reset to demo data"
+            >
+              Reset demo
+            </button>
+          )}
           <button className={styles.signOut} onClick={signOut}>
             Sign out
           </button>

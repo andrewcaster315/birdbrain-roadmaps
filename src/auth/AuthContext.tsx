@@ -34,9 +34,20 @@ const loadMockSession = (): MockSession | null => {
     return null;
   }
 };
-const saveMockSession = (s: MockSession) =>
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
-const clearMockSession = () => localStorage.removeItem(STORAGE_KEY);
+const saveMockSession = (s: MockSession) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+  } catch (err) {
+    console.warn("[auth] saveMockSession localStorage failed:", err);
+  }
+};
+const clearMockSession = () => {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (err) {
+    console.warn("[auth] clearMockSession localStorage failed:", err);
+  }
+};
 
 type Ctx = {
   currentUser: User | null;
@@ -70,13 +81,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (supabaseEnabled && supabase) {
       const sb = supabase;
       let cancelled = false;
+      // Bump on each fetch invocation so out-of-order completions from
+      // overlapping onAuthStateChange events don't clobber the latest
+      // result. Only the most-recent fetch's writes are applied.
+      let currentRequest = 0;
       // Retry budget for the brief race condition where the handle_new_user
       // trigger hasn't completed yet. If we still can't find the row after
       // ~3 attempts (~2 seconds), the session is dangling — sign out so we
       // don't loop network requests forever.
       const MAX_ATTEMPTS = 3;
-      const fetchUser = async (attempt = 0) => {
+      const fetchUser = async (attempt = 0, requestId = ++currentRequest) => {
         if (cancelled) return;
+        // Stale: a newer fetchUser has been issued since this one started.
+        if (requestId !== currentRequest) return;
         // Defensive: getSession itself can fail (rate-limit, network blip,
         // mis-configured Supabase URL). Previously we awaited the destructure
         // and any throw would leave authResolved=false forever — the app
@@ -110,7 +127,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           .maybeSingle();
         if (error || !row) {
           if (attempt < MAX_ATTEMPTS - 1) {
-            setTimeout(() => fetchUser(attempt + 1), 600);
+            // Reuse the same requestId on retries so a quick state-change
+            // event during the retry window doesn't kill the retry chain.
+            setTimeout(() => fetchUser(attempt + 1, requestId), 600);
             return;
           }
           console.warn(

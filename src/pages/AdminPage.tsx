@@ -211,8 +211,25 @@ const StatusCard = () => {
     const a = statuses[idx];
     const b = statuses[direction === "up" ? idx - 1 : idx + 1];
     if (!a || !b) return;
-    service.updateStatus(a.id, { position: b.position }, currentUser?.id ?? null);
-    service.updateStatus(b.id, { position: a.position }, currentUser?.id ?? null);
+    const origA = a.position;
+    const origB = b.position;
+    try {
+      service.updateStatus(a.id, { position: origB }, currentUser?.id ?? null);
+      try {
+        service.updateStatus(b.id, { position: origA }, currentUser?.id ?? null);
+      } catch (err) {
+        // Best-effort revert so we don't leave two statuses at the same
+        // position.
+        try {
+          service.updateStatus(a.id, { position: origA }, currentUser?.id ?? null);
+        } catch {
+          /* swallow — original error surfaces via toast */
+        }
+        throw err;
+      }
+    } catch {
+      /* surfaced via service onError toast */
+    }
   };
 
   return (

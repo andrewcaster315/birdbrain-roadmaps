@@ -71,15 +71,15 @@
 .error .icon { background: var(--color-danger); }
 
 .success {
-  border-color: #047857;
+  border-color: var(--color-status-done);
   background: #ecfdf5;
-  color: #065f46;
+  color: var(--color-status-done);
 }
-.success .icon { background: #047857; }
+.success .icon { background: var(--color-status-done); }
 
 .info {
-  border-color: var(--color-primary);
+  border-color: var(--color-accent);
   background: #eef2ff;
-  color: var(--color-primary);
+  color: var(--color-accent);
 }
-.info .icon { background: var(--color-primary); }
+.info .icon { background: var(--color-accent); }

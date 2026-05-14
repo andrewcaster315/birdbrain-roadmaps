@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useData } from "../data/DataContext";
 import { useAuth } from "../auth/AuthContext";
 import { FavoriteStar } from "../components/FavoriteStar";
 import { GettingStarted } from "../components/GettingStarted";
+import { useFocusTrap } from "../utils/useFocusTrap";
 import type { ID, Group } from "../types";
 import styles from "./HomePage.module.css";
 
@@ -66,15 +67,12 @@ export const HomePage = () => {
   const [description, setDescription] = useState("");
   const [parentGroupId, setParentGroupId] = useState<ID | "">("");
   const [error, setError] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLFormElement | null>(null);
 
-  useEffect(() => {
-    if (!showCreate) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setShowCreate(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [showCreate]);
+  useFocusTrap(dialogRef, {
+    active: showCreate,
+    onEscape: () => setShowCreate(false),
+  });
 
   const groups = service.listGroups();
   const allRoadmaps = service.listRoadmaps();
@@ -230,9 +228,11 @@ export const HomePage = () => {
         </section>
       ) : (
         <>
-          {groups.length > 0 && (
-            <GettingStarted hasFavorites={favoriteRoadmaps.length > 0} />
-          )}
+          {/* Always render the Getting Started panel — it self-hides once
+              the user has dismissed it or starred their first roadmap. This
+              way brand-new tenants (zero groups) get the concept tour AND
+              the "create your first group" CTA together. */}
+          <GettingStarted hasFavorites={favoriteRoadmaps.length > 0} />
           {currentUser && favoriteRoadmaps.length > 0 && (
             <section>
               <h2 className={styles.section}>Your favorites</h2>
@@ -337,6 +337,7 @@ export const HomePage = () => {
             role="dialog"
             aria-modal="true"
             aria-labelledby="new-group-title"
+            ref={dialogRef}
           >
             <h2 id="new-group-title" className={styles.modalTitle}>
               New group

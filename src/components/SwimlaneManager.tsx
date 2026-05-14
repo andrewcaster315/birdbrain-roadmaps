@@ -78,16 +78,37 @@ export const SwimlaneManager = ({ roadmapId, onClose }: Props) => {
                 const a = swimlanes[idx];
                 const b = swimlanes[direction === "up" ? idx - 1 : idx + 1];
                 if (!a || !b) return;
-                service.updateSwimlane(
-                  a.id,
-                  { position: b.position },
-                  currentUser?.id ?? null
-                );
-                service.updateSwimlane(
-                  b.id,
-                  { position: a.position },
-                  currentUser?.id ?? null
-                );
+                const origA = a.position;
+                const origB = b.position;
+                try {
+                  service.updateSwimlane(
+                    a.id,
+                    { position: origB },
+                    currentUser?.id ?? null
+                  );
+                  try {
+                    service.updateSwimlane(
+                      b.id,
+                      { position: origA },
+                      currentUser?.id ?? null
+                    );
+                  } catch (err) {
+                    // Best-effort revert so we don't leave two lanes at the
+                    // same position.
+                    try {
+                      service.updateSwimlane(
+                        a.id,
+                        { position: origA },
+                        currentUser?.id ?? null
+                      );
+                    } catch {
+                      /* swallow — original error surfaces via toast */
+                    }
+                    throw err;
+                  }
+                } catch {
+                  /* surfaced via service onError toast */
+                }
               };
               return (
                 <div key={s.id} className={styles.row}>

@@ -23,11 +23,11 @@ export const TermsGate = ({ children }: { children: ReactNode }) => {
     !!currentUser &&
     currentUser.termsVersionAccepted !== CURRENT_TERMS_VERSION;
 
-  // Trap focus inside the dialog. Escape signs out (the only way to "leave"
-  // without accepting). Hook unconditionally so hook order stays stable.
+  // Trap focus inside the dialog. Escape is a no-op here — users can use the
+  // explicit Decline button. Hook unconditionally so hook order stays stable.
   useFocusTrap(dialogRef, {
     active: needsAcceptance,
-    onEscape: needsAcceptance ? signOut : undefined,
+    onEscape: undefined,
   });
 
   if (!currentUser) return <>{children}</>;
@@ -91,10 +91,16 @@ export const TermsGate = ({ children }: { children: ReactNode }) => {
         <p className={styles.links}>
           <Link to="/legal/privacy" target="_blank" rel="noreferrer">
             Privacy Policy ↗
+            <span style={{ position: "absolute", left: "-9999px" }}>
+              (opens in new tab)
+            </span>
           </Link>
           <span aria-hidden="true"> · </span>
           <Link to="/legal/terms" target="_blank" rel="noreferrer">
             Terms of Use ↗
+            <span style={{ position: "absolute", left: "-9999px" }}>
+              (opens in new tab)
+            </span>
           </Link>
         </p>
 

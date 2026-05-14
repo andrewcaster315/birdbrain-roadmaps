@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import * as Sentry from "@sentry/react";
 import { mockService, subscribe as subscribeMock } from "./mockService";
 import { SupabaseService } from "./supabaseService";
 import { supabase, supabaseEnabled } from "./supabaseClient";
@@ -33,6 +34,7 @@ const supabaseService =
 if (supabaseService) {
   supabaseService.onError = (message) => {
     console.error("[SupabaseService]", message);
+    Sentry.captureMessage(message, "error");
     pushToast({
       kind: "error",
       message: `Couldn't save — ${message}`,

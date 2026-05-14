@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useData } from "../data/DataContext";
 import { useAuth } from "../auth/AuthContext";
 import { InlineEdit } from "../components/InlineEdit";
 import { confirmDialog } from "../components/ConfirmDialog";
 import { pushToast } from "../components/Toaster";
+import { useFocusTrap } from "../utils/useFocusTrap";
 import styles from "./GroupPage.module.css";
 
 export const GroupPage = () => {
@@ -22,15 +23,12 @@ export const GroupPage = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLFormElement | null>(null);
 
-  useEffect(() => {
-    if (!showCreate) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setShowCreate(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [showCreate]);
+  useFocusTrap(dialogRef, {
+    active: showCreate,
+    onEscape: () => setShowCreate(false),
+  });
 
   if (!group) {
     return (
@@ -199,6 +197,7 @@ export const GroupPage = () => {
             role="dialog"
             aria-modal="true"
             aria-labelledby="new-roadmap-title"
+            ref={dialogRef}
           >
             <h2 id="new-roadmap-title" className={styles.modalTitle}>
               New roadmap

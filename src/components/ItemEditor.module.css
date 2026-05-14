@@ -67,9 +67,9 @@
 }
 
 .readonlyBanner {
-  background: #fef3c7;
-  border: 1px solid #d97706;
-  color: #78350f;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
   padding: 10px 12px;
   border-radius: 6px;
   font-size: 13px;
@@ -82,14 +82,14 @@
 .bannerLink {
   background: none;
   border: none;
-  color: #78350f;
+  color: var(--color-text-muted);
   font: inherit;
   text-decoration: underline;
   cursor: pointer;
   font-weight: 600;
   margin-left: auto;
 }
-.bannerLink:hover { color: #422006; }
+.bannerLink:hover { color: var(--color-text); }
 
 .depPicker { position: relative; }
 .depSummary {
@@ -146,16 +146,16 @@
 }
 .depLabel { font-size: 12px; color: var(--color-text-muted); }
 .depChip {
-  background: #e0e7ff;
-  color: #1e40af;
-  border: 1px solid #c7d2fe;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
   border-radius: 999px;
   padding: 3px 10px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
 }
-.depChip:hover { background: #c7d2fe; }
+.depChip:hover { background: var(--color-border); }
 .depChip:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
 
 .activity {

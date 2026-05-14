@@ -7,7 +7,7 @@
 //   useFocusTrap(ref, { onEscape: onClose });
 //   return <div ref={ref} role="dialog" aria-modal="true">…</div>;
 
-import { useEffect, type RefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 
 const FOCUSABLE_SELECTOR = [
   "a[href]",
@@ -31,21 +31,35 @@ export const useFocusTrap = (
 ) => {
   const { onEscape, active = true } = options;
 
+  // Keep the latest onEscape callback in a ref so the trap effect can stay
+  // stable across re-renders. Without this, every parent re-render (and they
+  // happen a lot — useData/useAuth churn, version ticks on every mutation)
+  // would tear down and re-attach the listener, which has two nasty side
+  // effects: (1) `previouslyFocused` gets recaptured to an element inside the
+  // dialog and focus restoration on close points back into the dead dialog
+  // instead of the original trigger; (2) the initial-focus logic can yank
+  // focus away from a user mid-typing.
+  const onEscapeRef = useRef(onEscape);
+  useEffect(() => {
+    onEscapeRef.current = onEscape;
+  }, [onEscape]);
+
   useEffect(() => {
     if (!active) return;
     const container = containerRef.current;
     if (!container) return;
 
     // Remember the element that opened this dialog so we can restore focus
-    // when it closes.
+    // when it closes. Captured once when the trap activates.
     const previouslyFocused = document.activeElement as HTMLElement | null;
 
-    // Focus the first focusable element, or the container itself if there
-    // aren't any. Defer one tick so just-rendered children are picked up.
     const focusables = () =>
       Array.from(
         container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
       ).filter((el) => !el.hasAttribute("aria-hidden"));
+
+    // Focus the first focusable element, or the container itself if there
+    // aren't any. Defer one tick so just-rendered children are picked up.
     queueMicrotask(() => {
       const els = focusables();
       if (els.length > 0) {
@@ -61,9 +75,9 @@ export const useFocusTrap = (
     });
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && onEscape) {
+      if (e.key === "Escape" && onEscapeRef.current) {
         e.stopPropagation();
-        onEscape();
+        onEscapeRef.current();
         return;
       }
       if (e.key !== "Tab") return;
@@ -95,5 +109,8 @@ export const useFocusTrap = (
         previouslyFocused.focus();
       }
     };
-  }, [active, containerRef, onEscape]);
+    // Intentionally omit onEscape from deps — we read it via ref so the
+    // listener stays stable across renders.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, containerRef]);
 };

@@ -151,6 +151,14 @@ export const RoadmapPage = () => {
         </div>
       </div>
 
+      {items.length === 0 && (
+        <div className={styles.emptyHint} role="status">
+          <strong>This roadmap is empty.</strong>{" "}
+          Click <strong>+ Item</strong> above to add your first one.
+          Items get a title, owner, dates, status, and a swimlane.
+        </div>
+      )}
+
       <Timeline
         granularity={roadmap.timelineGranularity}
         quarterMode={roadmap.quarterMode}

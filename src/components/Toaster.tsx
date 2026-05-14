@@ -83,7 +83,6 @@ export const Toaster = () => {
       className={styles.stack}
       role="region"
       aria-label="Notifications"
-      aria-live="polite"
     >
       {current.map((t) => (
         <div

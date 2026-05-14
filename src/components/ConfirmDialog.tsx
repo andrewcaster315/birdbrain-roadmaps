@@ -40,12 +40,12 @@ const notify = () => {
 };
 
 export const confirmDialog = (opts: ConfirmOptions): Promise<boolean> => {
+  // If something else is already open, reject this new call so the caller
+  // can distinguish "another dialog is open" from a user cancellation.
+  if (pending) {
+    return Promise.reject(new Error("Another confirmation is already open"));
+  }
   return new Promise<boolean>((resolve) => {
-    // If something else is open, resolve that one as cancelled first so
-    // we don't lose track of its promise.
-    if (pending) {
-      pending.resolve(false);
-    }
     pending = { ...opts, id: newId(), resolve };
     notify();
   });
@@ -83,12 +83,10 @@ export const ConfirmDialogHost = () => {
   return (
     <div
       className={styles.backdrop}
-      onClick={() => resolveAndClose(false)}
       role="presentation"
     >
       <div
         className={styles.card}
-        onClick={(e) => e.stopPropagation()}
         role="alertdialog"
         aria-modal="true"
         aria-labelledby={`confirm-title-${current.id}`}

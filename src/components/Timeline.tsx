@@ -884,7 +884,7 @@ export const Timeline = ({
                             }. Press Enter to edit. Arrow keys to move; Alt+Arrow to resize the end; Cmd+Arrow to resize the start.`}
                             aria-keyshortcuts={
                               r.item.homeRoadmapId === currentRoadmapId
-                                ? "Enter ArrowLeft ArrowRight Shift+ArrowLeft Shift+ArrowRight Alt+ArrowLeft Alt+ArrowRight Meta+ArrowLeft Meta+ArrowRight"
+                                ? "Enter ArrowLeft ArrowRight Shift+ArrowLeft Shift+ArrowRight Alt+ArrowLeft Alt+ArrowRight Meta+ArrowLeft Meta+ArrowRight Control+ArrowLeft Control+ArrowRight"
                                 : "Enter"
                             }
                             title={`${r.item.title} (${start} → ${end})${
@@ -1123,7 +1123,6 @@ const ItemListView = ({
                 <span
                   className={`${styles.statusChip} ${styles.mobileStatusChip}`}
                   style={statusStyle(statuses, r.item.status)}
-                  aria-hidden="true"
                 >
                   {r.item.status}
                 </span>

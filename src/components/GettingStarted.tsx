@@ -18,13 +18,24 @@ export const GettingStarted = ({ hasFavorites }: Props) => {
   const [dismissed, setDismissed] = useState<boolean>(false);
 
   useEffect(() => {
-    setDismissed(localStorage.getItem(STORAGE_KEY) === "1");
+    try {
+      setDismissed(localStorage.getItem(STORAGE_KEY) === "1");
+    } catch {
+      // Storage disabled (e.g. iOS Safari private mode). Treat as "not
+      // dismissed yet" — the card will keep appearing each session, which
+      // is acceptable.
+    }
   }, []);
 
   if (dismissed || hasFavorites) return null;
 
   const onDismiss = () => {
-    localStorage.setItem(STORAGE_KEY, "1");
+    try {
+      localStorage.setItem(STORAGE_KEY, "1");
+    } catch {
+      // Best-effort; in-memory state below still hides the card for this
+      // session even if persistence fails.
+    }
     setDismissed(true);
   };
 
@@ -45,7 +56,7 @@ export const GettingStarted = ({ hasFavorites }: Props) => {
 
       <ol className={styles.steps}>
         <li>
-          <span className={styles.stepN}>1</span>
+          <span className={styles.stepN} aria-hidden="true">1</span>
           <div>
             <strong>Groups hold roadmaps.</strong> A group is usually a team
             (e.g. "Growth Product") or a program (e.g. "Onboarding Overhaul").
@@ -53,7 +64,7 @@ export const GettingStarted = ({ hasFavorites }: Props) => {
           </div>
         </li>
         <li>
-          <span className={styles.stepN}>2</span>
+          <span className={styles.stepN} aria-hidden="true">2</span>
           <div>
             <strong>Roadmaps hold items.</strong> Items have a title, owner,
             status, dates, and a priority. Drag bars on the timeline to move
@@ -61,7 +72,7 @@ export const GettingStarted = ({ hasFavorites }: Props) => {
           </div>
         </li>
         <li>
-          <span className={styles.stepN}>3</span>
+          <span className={styles.stepN} aria-hidden="true">3</span>
           <div>
             <strong>Subscribe to peer roadmaps.</strong> Director-level views
             work by subscribing — items from other teams appear on yours
@@ -70,7 +81,7 @@ export const GettingStarted = ({ hasFavorites }: Props) => {
           </div>
         </li>
         <li>
-          <span className={styles.stepN}>4</span>
+          <span className={styles.stepN} aria-hidden="true">4</span>
           <div>
             <strong>Star roadmaps you care about.</strong> Favorites show up
             at the top of this page for quick access. This card disappears
