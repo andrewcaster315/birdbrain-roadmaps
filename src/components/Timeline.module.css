@@ -1,0 +1,658 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  /* No gap between .toolbar and .scroll — they're meant to read as one
+     visual block (toolbar's bottom is flat; scroll's top is flat). The list
+     view below gets its own top margin instead. */
+}
+
+/* Integrated toolbar attached to the top of the timeline (no gap).
+   No box-shadow here — the .scroll element below carries the elevation for
+   the combined block, otherwise the toolbar's drop-shadow casts onto the
+   scroll and visually peels them apart. */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 8px 12px;
+}
+
+.toolbarLeft, .toolbarRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toolbarLabel {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.toggleGroup {
+  display: inline-flex;
+  background: var(--color-bg);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.toggle, .toggleActive {
+  background: transparent;
+  border: none;
+  padding: 5px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 4px;
+  text-transform: capitalize;
+  color: var(--color-text-muted);
+}
+.toggle:focus-visible, .toggleActive:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+.toggleActive {
+  background: #fff;
+  color: var(--color-primary);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.linkBtn {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--color-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.linkBtn:hover { background: var(--color-bg); }
+.linkBtn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+
+.badge {
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.panGroup {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.panBtn {
+  background: #fff;
+  border: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--color-text);
+  border-right: 1px solid var(--color-border);
+}
+.panBtn:last-child { border-right: none; }
+.panBtn:hover { background: var(--color-bg); }
+.panBtn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: -2px; }
+
+/* Scrollable canvas — joined to the toolbar (no top border-radius, no top border) */
+.scroll {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0 0 var(--radius) var(--radius);
+  overflow-x: auto;
+  overflow-y: hidden;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+.canvas {
+  position: relative;
+  min-width: 100%;
+}
+
+.headerRow {
+  display: flex;
+  background: #fafbfc;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.quarterRow {
+  display: flex;
+  background: #f1f4f8;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.quarterCell {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Header-row gutter cells (no label — visually distinct hatched fill). When
+   both header rows are present they should read as one continuous block, so
+   only the bottom one carries a bottom border. */
+.headerGutter {
+  background-color: #fafbfc;
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    transparent 6px,
+    rgba(31, 56, 100, 0.06) 6px,
+    rgba(31, 56, 100, 0.06) 7px
+  );
+  border-bottom: 1px solid var(--color-border);
+}
+.headerGutterTop { border-bottom: none; }
+
+.laneGutter, .laneLabel {
+  flex-shrink: 0;
+  width: 160px;
+  border-right: 1px solid var(--color-border);
+  background: #fafbfc;
+}
+
+.laneGutter {
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Sticky lane gutter — keeps the swimlane labels fixed when scrolling horizontally.
+   Higher z-index than the today/marker overlay so the lane labels always paint
+   on top, occluding any line that would otherwise show through the gutter. */
+.stickyGutter {
+  position: sticky;
+  left: 0;
+  z-index: 6;
+}
+
+.headerCols { display: flex; }
+
+.headerCell {
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Lanes */
+.lanes {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.lane {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+}
+.lane:last-child { border-bottom: none; }
+
+.laneLabel {
+  padding: 10px 12px;
+}
+
+.laneName { font-weight: 600; font-size: 13px; color: var(--color-text); }
+.laneDesc { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
+
+.laneCanvas {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.gridCol {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-right: 1px dashed #eef0f4;
+  pointer-events: none;
+}
+
+/* "+ Add swimlane" row sits below all existing lanes */
+.addLaneRow {
+  display: flex;
+  border-top: 1px dashed var(--color-border);
+  min-height: 36px;
+}
+.addLaneCanvas {
+  flex-shrink: 0;
+}
+.addLaneBtn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  text-align: left;
+  font-weight: 600;
+  border-radius: 4px;
+}
+.addLaneBtn:hover {
+  background: rgba(31, 56, 100, 0.05);
+  color: var(--color-primary);
+}
+.addLaneBtn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+/* Single overlay above all lanes — Today line and markers go here.
+   Low z-index so the lines render BEHIND item bars (bars stay readable).
+   The marker labels themselves live in the marker strip above with their
+   own positive z-index, so they're not affected by this. */
+.overlay {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Today + marker lines start at the top of the marker strip (so they visually
+   touch their label) and extend down through all swimlanes. z-index 0 keeps
+   them behind item bars so the bars stay readable. */
+.todayLine {
+  position: absolute;
+  top: 0;
+  width: 0;
+  border-left: 2px dashed #b91c1c;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.markerLine {
+  position: absolute;
+  top: 0;
+  width: 0;
+  border-left: 2px solid;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Marker strip sits between the bucket header and the lanes. Labels live here
+   so they never paint over item bars. The strip is sticky so labels remain
+   visible if the user vertically scrolls long lane lists in the future. */
+.markerStrip {
+  display: flex;
+  background: #fef6e7;
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.markerStripGutter {
+  background: #fef6e7;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.markerGutterBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  font-weight: 700;
+  color: #7a4a07;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  text-align: left;
+}
+.markerGutterBtn:hover {
+  background: rgba(217, 119, 6, 0.1);
+}
+.markerGutterBtn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+.markerAddIcon {
+  font-size: 16px;
+  font-weight: 400;
+  color: #b45309;
+}
+
+.todayLabel,
+.markerLabel {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  z-index: 2;
+}
+.markerLabel:hover { filter: brightness(1.08); }
+.markerLabel:focus-visible { outline: 2px solid var(--color-text); outline-offset: 2px; }
+
+.markerStripCanvas {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Today + marker labels share absolute positioning; the parent strip
+   computes the top of each row via inline style for collision-avoidance. */
+.todayLabel,
+.markerLabel {
+  position: absolute;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  color: #fff;
+  font-size: 10px;
+  padding: 0 6px;
+  border-radius: 3px;
+  font-weight: 700;
+  white-space: nowrap;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translateX(-50%);
+}
+.todayLabel { z-index: 1; }
+
+.barRow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 32px;
+}
+
+.bar {
+  position: absolute;
+  top: 0;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  cursor: grab;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+  touch-action: none;
+}
+.bar:active { cursor: grabbing; }
+.bar:hover { filter: brightness(1.06); }
+.bar:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+.barTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.barOwner { font-weight: 400; opacity: 0.9; white-space: nowrap; }
+.barTag {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.92;
+}
+
+.barSubscribed {
+  border: 2px dashed #fff;
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
+
+.barReadonly { cursor: pointer; opacity: 0.92; }
+
+.handleLeft, .handleRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: ew-resize;
+  z-index: 1;
+}
+.handleLeft { left: 0; }
+.handleRight { right: 0; }
+
+/* Status colors are applied inline from the tenant's StatusDef.color. */
+
+/* Item list */
+.itemList {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-top: 12px;
+}
+
+.itemListHeader {
+  display: grid;
+  grid-template-columns: 110px 2fr 1fr 1fr 1fr 1.4fr auto;
+  gap: 12px;
+  padding: 8px 14px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  background: #fafbfc;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.itemListRow {
+  display: grid;
+  grid-template-columns: 110px 2fr 1fr 1fr 1fr 1.4fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 13px;
+}
+
+.priCol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+}
+.priRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.priReorder {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.priReorderBtn {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0 5px;
+  font-size: 9px;
+  line-height: 1.2;
+  cursor: pointer;
+  color: var(--color-text);
+}
+.priReorderBtn:hover:not(:disabled) { background: var(--color-bg); }
+.priReorderBtn:disabled { opacity: 0.35; cursor: not-allowed; }
+.priReorderBtn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+.priNum {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-size: 14px;
+}
+.priSource {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+.itemListRow:last-child { border-bottom: none; }
+
+.itemTitleBtn {
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-primary);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.itemTitleBtn:hover { color: var(--color-primary-hover); text-decoration: underline; }
+.itemTitleBtn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+.subBadge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--color-text-muted);
+  padding: 2px 8px;
+  border-radius: 999px;
+  align-self: flex-start;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.statusChip {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Inline-edit cells inside the items table */
+.inlineSelect {
+  width: 100%;
+  background: #fff;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 4px 6px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--color-text);
+  font-family: inherit;
+}
+.inlineSelect:hover:not(:disabled) {
+  border-color: var(--color-border);
+  background: var(--color-bg);
+}
+.inlineSelect:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+  border-color: var(--color-primary);
+}
+.inlineSelect:disabled {
+  cursor: default;
+  opacity: 0.85;
+  background: transparent;
+}
+
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+.dateArrow { color: var(--color-text-muted); font-size: 11px; }
+.inlineDate {
+  background: #fff;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 3px 6px;
+  font-size: 11px;
+  font-family: inherit;
+  color: var(--color-text);
+  min-width: 0;
+  width: 100%;
+}
+.inlineDate:hover:not(:disabled) {
+  border-color: var(--color-border);
+  background: var(--color-bg);
+}
+.inlineDate:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+  border-color: var(--color-primary);
+}
+.inlineDate:disabled {
+  cursor: default;
+  opacity: 0.85;
+  background: transparent;
+}
+
+.actionCell { display: flex; gap: 6px; justify-content: flex-end; }
+
+.actionBtn {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--color-text);
+}
+.actionBtn:hover:not(:disabled) { background: var(--color-bg); }
+.actionBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.actionBtn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+
+@media (max-width: 720px) {
+  .itemListHeader { grid-template-columns: 78px 1fr auto; }
+  .itemListRow { grid-template-columns: 78px 1fr auto; }
+  .cellHide { display: none; }
+  .laneLabel, .laneGutter { width: 110px; }
+  .priSource { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar { transition: none; }
+}

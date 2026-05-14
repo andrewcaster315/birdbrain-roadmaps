@@ -1,0 +1,17 @@
+.star {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--color-text-muted);
+}
+.star:hover { background: var(--color-bg); }
+.star:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+
+.md { font-size: 22px; padding: 6px; }
+
+.filled { color: #d97706; } /* amber-600 */
+.outline { color: var(--color-text-muted); }

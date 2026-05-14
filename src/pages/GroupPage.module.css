@@ -1,0 +1,171 @@
+.wrap { display: flex; flex-direction: column; gap: 20px; }
+
+.crumbs { font-size: 13px; color: var(--color-text-muted); }
+.crumbs a { color: var(--color-text-muted); }
+.crumbs a:hover { color: var(--color-text); }
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.titleBlock { flex: 1 1 320px; min-width: 240px; display: flex; flex-direction: column; gap: 4px; }
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+  white-space: normal;
+  word-break: break-word;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.description { font-size: 14px; color: var(--color-text-muted); }
+
+.parentRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.parentLabel { font-weight: 500; }
+
+.parentSelect {
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 12px;
+  background: #fff;
+  color: var(--color-text);
+}
+.parentSelect:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.section {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  margin: 0 0 8px 0;
+}
+
+.empty {
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.gridList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.tile {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-decoration: none;
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.tile:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); text-decoration: none; }
+.tile:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .tile { transition: none; }
+  .tile:hover { transform: none; }
+}
+
+.tileHeader { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+
+.tileTitle { font-weight: 600; color: var(--color-primary); }
+.tileMeta { font-size: 12px; color: var(--color-text-muted); }
+
+.primary {
+  background: var(--color-primary);
+  color: #fff; border: none; border-radius: 6px;
+  padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.primary:hover { background: var(--color-primary-hover); }
+
+.secondary {
+  background: #fff; color: var(--color-text);
+  border: 1px solid var(--color-border); border-radius: 6px;
+  padding: 8px 14px; font-size: 13px; cursor: pointer;
+}
+.secondary:hover { background: var(--color-bg); }
+
+.danger {
+  background: #fff;
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+  border-radius: 6px;
+  padding: 8px 14px; font-size: 13px; cursor: pointer;
+}
+.danger:hover { background: var(--color-danger-bg); }
+
+.modalBackdrop {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  display: grid; place-items: center;
+  z-index: 100; padding: 16px;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%; max-width: 420px;
+  display: flex; flex-direction: column; gap: 12px;
+  box-shadow: var(--shadow-lg);
+}
+
+.modalTitle { font-size: 18px; font-weight: 700; margin: 0 0 4px 0; }
+
+.label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--color-text-muted); }
+
+.input {
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--color-text);
+}
+.input:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; border-color: var(--color-primary); }
+
+.error {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.modalActions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }

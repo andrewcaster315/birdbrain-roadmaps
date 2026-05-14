@@ -1,0 +1,75 @@
+.button {
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: text;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin: -2px -6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+  font: inherit;
+  max-width: 100%;
+}
+
+.button:hover {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.text { color: inherit; }
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.default {
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.empty {
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+.editHint {
+  opacity: 0;
+  font-size: 0.7em;
+  color: var(--color-text-muted);
+  transition: opacity 0.1s;
+}
+
+.button:hover .editHint,
+.button:focus-visible .editHint {
+  opacity: 1;
+}
+
+.input {
+  padding: 2px 6px;
+  border: 2px solid var(--color-primary);
+  border-radius: 4px;
+  margin: -4px -8px;
+  background: #fff;
+  font: inherit;
+  color: inherit;
+  outline: none;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  resize: vertical;
+}

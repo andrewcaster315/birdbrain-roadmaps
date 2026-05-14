@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Birdbrain mark: a stylized bird head in profile, with a brain-curl
+       motif inside suggesting "thinking." Monochrome via currentColor so
+       it inherits text color wherever it's rendered. -->
+  <!-- Head silhouette: rounded back, pointed beak, slight notch under chin -->
+  <path
+    d="M30 8 C18 8 8 18 8 30 C8 42 16 50 26 52 L34 52 C36 52 38 52 39 50 L41 46 L60 38 L54 32 L60 26 L41 22 C40 18 38 14 34 11 C33 9 31 8 30 8 Z"
+    fill="currentColor"
+  />
+  <!-- Brain spiral: subtle curl inside the head, suggesting thought -->
+  <path
+    d="M22 30 C22 24 28 22 30 26 C32 30 26 32 24 30 C22 28 28 26 30 30 C32 34 26 36 22 32"
+    stroke="white"
+    stroke-width="2"
+    stroke-linecap="round"
+    fill="none"
+    opacity="0.92"
+  />
+  <!-- Eye -->
+  <circle cx="42" cy="26" r="1.8" fill="white" />
+</svg>

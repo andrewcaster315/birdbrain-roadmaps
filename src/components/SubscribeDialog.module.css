@@ -1,0 +1,75 @@
+.backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  display: grid; place-items: center;
+  z-index: 100; padding: 16px;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 22px;
+  width: 100%; max-width: 560px;
+  display: flex; flex-direction: column; gap: 14px;
+  box-shadow: var(--shadow-lg);
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.title { font-size: 18px; font-weight: 700; margin: 0; }
+.subhead {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.note { font-size: 13px; color: var(--color-text-muted); margin: 0 0 8px 0; }
+
+.list { display: flex; flex-direction: column; gap: 4px; }
+
+.row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.row:hover { background: var(--color-bg); }
+.row:focus-within { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+
+.subscriberRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--color-text);
+}
+.subscriberRow:hover { background: var(--color-bg); text-decoration: none; }
+.subscriberRow:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+
+.openHint { color: var(--color-text-muted); }
+
+.rowMain { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.rowTitle { font-weight: 600; font-size: 14px; color: var(--color-text); }
+.rowMeta { font-size: 12px; color: var(--color-text-muted); }
+
+.empty {
+  text-align: center; padding: 16px;
+  color: var(--color-text-muted); font-size: 13px;
+  border: 1px dashed var(--color-border); border-radius: 6px;
+}
+
+.actions { display: flex; justify-content: flex-end; }
+
+.primary {
+  background: var(--color-primary);
+  color: #fff; border: none; border-radius: 6px;
+  padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.primary:hover { background: var(--color-primary-hover); }
+.primary:focus-visible { outline: 2px solid var(--color-text); outline-offset: 2px; }

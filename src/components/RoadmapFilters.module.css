@@ -1,0 +1,110 @@
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.search {
+  flex: 0 1 220px;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+  color: var(--color-text);
+}
+.search:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 0;
+  border-color: var(--color-primary);
+}
+
+.filterBtn, .filterBtnActive {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--color-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.filterBtn:hover, .filterBtnActive:hover { background: var(--color-bg); }
+.filterBtn:focus-visible, .filterBtnActive:focus-visible {
+  outline: 2px solid var(--color-primary); outline-offset: 1px;
+}
+.filterBtnActive {
+  border-color: var(--color-primary);
+  background: rgba(31, 56, 100, 0.08);
+}
+
+.activeBadge {
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.clearBtn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+.clearBtn:hover { color: var(--color-text); }
+.clearBtn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; border-radius: 3px; }
+
+.popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 50;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 12px;
+  width: 320px;
+  max-height: 60vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.section { display: flex; flex-direction: column; gap: 6px; }
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.chipRow { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.chip, .chipOn {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.chip:hover { background: var(--color-bg); }
+.chip:focus-visible, .chipOn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+.chipOn {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+  font-weight: 600;
+}
