@@ -17,10 +17,13 @@
   gap: 10px;
   min-width: 280px;
   max-width: 420px;
-  padding: 10px 12px 10px 14px;
+  padding: 10px 14px 10px 14px;
   border-radius: var(--radius);
   background: #fff;
   border: 1px solid var(--color-border);
+  /* Severity is carried by a thicker left border in the kind color — no
+     icon circle. Cleaner, less templated-looking. */
+  border-left-width: 4px;
   box-shadow: var(--shadow-lg);
   font-size: 13px;
   color: var(--color-text);
@@ -30,18 +33,6 @@
 @keyframes slideIn {
   from { transform: translateY(8px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
-}
-
-.icon {
-  flex-shrink: 0;
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  font-size: 11px;
-  font-weight: 700;
-  color: #fff;
 }
 
 .msg {
@@ -64,22 +55,19 @@
 .close:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; border-radius: 4px; }
 
 .error {
-  border-color: var(--color-danger);
+  border-left-color: var(--color-danger);
   background: var(--color-danger-bg);
   color: var(--color-danger);
 }
-.error .icon { background: var(--color-danger); }
 
 .success {
-  border-color: var(--color-status-done);
+  border-left-color: var(--color-status-done);
   background: #ecfdf5;
   color: var(--color-status-done);
 }
-.success .icon { background: var(--color-status-done); }
 
 .info {
-  border-color: var(--color-accent);
+  border-left-color: var(--color-accent);
   background: #eef2ff;
   color: var(--color-accent);
 }
-.info .icon { background: var(--color-accent); }

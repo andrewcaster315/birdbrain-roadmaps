@@ -581,34 +581,36 @@ export class SupabaseService implements DataService {
           .then(({ error }) => ({ error }))
     );
   }
-  recordTermsAcceptance(userId: ID, version: string): User {
+  // Awaits the server write before resolving so the gate stays visible if
+  // the write fails (caller awaits this promise). Doesn't go through the
+  // optimistic `mutate` helper — we want the caller to handle the error
+  // synchronously rather than dismissing the gate and seeing a toast.
+  async recordTermsAcceptance(userId: ID, version: string): Promise<User> {
     const cur = this.byId(this.snap.users, userId);
     if (!cur) throw new Error("User not found.");
     if (cur.termsVersionAccepted === version) return cur;
     const acceptedAt = nowISO();
+    const { error } = await this.supabase
+      .from("users")
+      .update({
+        terms_version_accepted: version,
+        terms_accepted_at: acceptedAt,
+      })
+      .eq("id", userId);
+    if (error) {
+      throw new Error(error.message);
+    }
     const next: User = {
       ...cur,
       termsVersionAccepted: version,
       termsAcceptedAt: acceptedAt,
     };
-    return this.mutate(
-      () => {
-        this.snap = { ...this.snap, users: this.replace(this.snap.users, next) };
-        return next;
-      },
-      () => {
-        this.snap = { ...this.snap, users: this.replace(this.snap.users, cur) };
-      },
-      () =>
-        this.supabase
-          .from("users")
-          .update({
-            terms_version_accepted: version,
-            terms_accepted_at: acceptedAt,
-          })
-          .eq("id", userId)
-          .then(({ error }) => ({ error }))
-    );
+    this.snap = {
+      ...this.snap,
+      users: this.replace(this.snap.users, next),
+    };
+    this.notify();
+    return next;
   }
 
   // ---------- Groups ----------

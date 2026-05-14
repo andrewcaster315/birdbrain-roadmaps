@@ -90,9 +90,6 @@ export const Toaster = () => {
           className={`${styles.toast} ${styles[t.kind]}`}
           role={t.kind === "error" ? "alert" : "status"}
         >
-          <span className={styles.icon} aria-hidden="true">
-            {t.kind === "error" ? "⚠" : t.kind === "success" ? "✓" : "ℹ"}
-          </span>
           <span className={styles.msg}>{t.message}</span>
           <button
             type="button"

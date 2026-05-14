@@ -74,36 +74,59 @@ export const useFocusTrap = (
       }
     });
 
-    const onKey = (e: KeyboardEvent) => {
+    // Listen at the document level so the trap still works if focus has
+    // somehow escaped to `<body>` (e.g. the previously-focused element was
+    // removed mid-dialog). The container-only listener missed this edge.
+    // We re-check `container.contains(target)` inside the handler so events
+    // outside the dialog are ignored.
+    const onDocKey = (e: KeyboardEvent) => {
       if (e.key === "Escape" && onEscapeRef.current) {
-        e.stopPropagation();
-        onEscapeRef.current();
+        // Only react if focus is somewhere within (or has escaped from) our
+        // dialog — don't hijack Escape for unrelated UI on the page below.
+        const target = e.target as HTMLElement | null;
+        if (
+          !target ||
+          target === document.body ||
+          container.contains(target)
+        ) {
+          e.stopPropagation();
+          onEscapeRef.current();
+        }
         return;
       }
       if (e.key !== "Tab") return;
       const els = focusables();
       if (els.length === 0) {
+        // No focusable elements yet — keep focus in the container itself.
         e.preventDefault();
+        container.focus();
         return;
       }
       const first = els[0];
       const last = els[els.length - 1];
       const activeEl = document.activeElement as HTMLElement | null;
+      // If focus has escaped the dialog entirely (e.g. landed on body),
+      // pull it back to the first focusable on any Tab press.
+      if (!container.contains(activeEl)) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+        return;
+      }
       if (e.shiftKey) {
-        if (activeEl === first || !container.contains(activeEl)) {
+        if (activeEl === first) {
           e.preventDefault();
           last.focus();
         }
       } else {
-        if (activeEl === last || !container.contains(activeEl)) {
+        if (activeEl === last) {
           e.preventDefault();
           first.focus();
         }
       }
     };
-    container.addEventListener("keydown", onKey);
+    document.addEventListener("keydown", onDocKey, true);
     return () => {
-      container.removeEventListener("keydown", onKey);
+      document.removeEventListener("keydown", onDocKey, true);
       // Restore focus to whatever had it before the dialog opened.
       if (previouslyFocused && document.contains(previouslyFocused)) {
         previouslyFocused.focus();

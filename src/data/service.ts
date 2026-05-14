@@ -47,9 +47,11 @@ export interface DataService {
   createOrFindUser(email: string, displayName?: string): User;
   updateUser(id: ID, patch: { displayName?: string }, actorId: ID | null): User;
   // Record that a user has agreed to the given Privacy / Terms version.
-  // Writes the version string and a timestamp on the user row and emits an
-  // audit entry. Idempotent — calling twice with the same version is a no-op.
-  recordTermsAcceptance(userId: ID, version: string): User;
+  // Returns a Promise that resolves only after the server has confirmed the
+  // write — the gate awaits this so a failed write keeps the gate visible
+  // instead of dropping it optimistically and re-prompting on next refresh.
+  // Idempotent: calling twice with the same version is a no-op.
+  recordTermsAcceptance(userId: ID, version: string): Promise<User>;
 
   // ---------- Groups ----------
   listGroups(includeDeleted?: boolean): Group[];

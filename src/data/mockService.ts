@@ -358,7 +358,7 @@ export const mockService: DataService = {
     persist();
     return next;
   },
-  recordTermsAcceptance(userId, version) {
+  async recordTermsAcceptance(userId, version) {
     const cur = byId(snap.users, userId);
     if (!cur) throw new Error("User not found.");
     if (cur.termsVersionAccepted === version) return cur;

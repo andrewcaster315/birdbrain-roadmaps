@@ -38,13 +38,18 @@ export const TermsGate = ({ children }: { children: ReactNode }) => {
     setSubmitting(true);
     setError(null);
     try {
-      const updated = service.recordTermsAcceptance(
+      // Await the server confirmation so the gate stays visible if the
+      // write fails — avoids the optimistic-then-rolled-back surprise of
+      // the gate reappearing on next refresh.
+      const updated = await service.recordTermsAcceptance(
         currentUser.id,
         CURRENT_TERMS_VERSION
       );
       setCurrentUser(updated);
     } catch (err) {
-      setError((err as Error).message);
+      setError(
+        `Couldn't save your acceptance: ${(err as Error).message}. Please try again.`
+      );
       setSubmitting(false);
     }
   };

@@ -8,7 +8,9 @@
 
 .card {
   background: var(--color-surface);
-  border-radius: var(--radius);
+  /* 12px matches the modal-card radius so the centered sign-in card visually
+     parents to the same family as ConfirmDialog / ItemEditor / etc. */
+  border-radius: 12px;
   box-shadow: var(--shadow-lg);
   padding: 32px;
   width: 100%;
