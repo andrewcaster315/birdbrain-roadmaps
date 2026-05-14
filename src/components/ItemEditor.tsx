@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useData } from "../data/DataContext";
 import { useAuth } from "../auth/AuthContext";
 import type { Item, Roadmap, Swimlane } from "../types";
 import { UserPicker } from "./UserPicker";
 import { formatDate } from "../utils/dates";
+import { useFocusTrap } from "../utils/useFocusTrap";
+import { confirmDialog } from "./ConfirmDialog";
 import styles from "./ItemEditor.module.css";
 
 type Props = {
@@ -51,13 +53,7 @@ export const ItemEditor = ({ item, roadmap, swimlanes, onClose }: Props) => {
   const [error, setError] = useState<string | null>(null);
   const dialogRef = useRef<HTMLFormElement | null>(null);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  useFocusTrap(dialogRef, { onEscape: onClose });
 
   const allItems = useMemo(
     () => service.listItems().filter((i) => i.id !== item?.id),
@@ -113,13 +109,16 @@ export const ItemEditor = ({ item, roadmap, swimlanes, onClose }: Props) => {
     }
   };
 
-  const onDelete = () => {
+  const onDelete = async () => {
     if (!item) return;
-    if (
-      confirm(
-        `Delete "${item.title}"? It will disappear from every roadmap it's on. You can restore it from Trash within 30 days.`
-      )
-    ) {
+    const ok = await confirmDialog({
+      title: `Delete "${item.title}"?`,
+      message:
+        "It will disappear from every roadmap it's on. You can restore it from Trash within 30 days.",
+      confirmLabel: "Delete",
+      variant: "danger",
+    });
+    if (ok) {
       service.deleteItem(item.id, currentUser?.id ?? null);
       onClose();
     }

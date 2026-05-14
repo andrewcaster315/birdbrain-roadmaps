@@ -4,6 +4,8 @@ import { useAuth } from "../auth/AuthContext";
 import { MARKER_COLORS } from "../types";
 import type { StatusDef } from "../types";
 import { InlineEdit } from "../components/InlineEdit";
+import { confirmDialog } from "../components/ConfirmDialog";
+import { pushToast } from "../components/Toaster";
 import styles from "./AdminPage.module.css";
 
 const MONTHS = [
@@ -189,16 +191,18 @@ const StatusCard = () => {
     }
   };
 
-  const onDelete = (s: StatusDef) => {
-    if (
-      confirm(
-        `Delete status "${s.name}"? Items with this status will be reassigned.`
-      )
-    ) {
+  const onDelete = async (s: StatusDef) => {
+    const ok = await confirmDialog({
+      title: `Delete status "${s.name}"?`,
+      message: "Items with this status will be reassigned.",
+      confirmLabel: "Delete",
+      variant: "danger",
+    });
+    if (ok) {
       try {
         service.deleteStatus(s.id, currentUser?.id ?? null);
       } catch (err) {
-        alert((err as Error).message);
+        pushToast({ kind: "error", message: (err as Error).message });
       }
     }
   };

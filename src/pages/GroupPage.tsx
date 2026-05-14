@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useData } from "../data/DataContext";
 import { useAuth } from "../auth/AuthContext";
 import { InlineEdit } from "../components/InlineEdit";
+import { confirmDialog } from "../components/ConfirmDialog";
+import { pushToast } from "../components/Toaster";
 import styles from "./GroupPage.module.css";
 
 export const GroupPage = () => {
@@ -53,12 +55,15 @@ export const GroupPage = () => {
     }
   };
 
-  const onDeleteGroup = () => {
-    if (
-      confirm(
-        `Delete "${group.name}"? Roadmaps under it stay visible until they're deleted individually.`
-      )
-    ) {
+  const onDeleteGroup = async () => {
+    const ok = await confirmDialog({
+      title: `Delete "${group.name}"?`,
+      message:
+        "Roadmaps under it stay visible until they're deleted individually.",
+      confirmLabel: "Delete",
+      variant: "danger",
+    });
+    if (ok) {
       service.deleteGroup(group.id, currentUser?.id ?? null);
       navigate("/");
     }
@@ -117,7 +122,7 @@ export const GroupPage = () => {
                     currentUser?.id ?? null
                   );
                 } catch (err) {
-                  alert((err as Error).message);
+                  pushToast({ kind: "error", message: (err as Error).message });
                 }
               }}
               aria-label="Parent group"

@@ -22,7 +22,7 @@
 }
 
 .title {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 700;
   margin: 0;
   white-space: normal;
@@ -46,7 +46,7 @@
 
 .parentSelect {
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: 6px;
   padding: 3px 8px;
   font-size: 12px;
   background: #fff;

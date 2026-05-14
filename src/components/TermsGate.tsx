@@ -3,11 +3,12 @@
 // the current CURRENT_TERMS_VERSION. On accept, writes the version + a
 // timestamp to the user row (with an audit entry) and lets the app render.
 
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { useData } from "../data/DataContext";
 import { CURRENT_TERMS_VERSION } from "../types";
+import { useFocusTrap } from "../utils/useFocusTrap";
 import styles from "./TermsGate.module.css";
 
 export const TermsGate = ({ children }: { children: ReactNode }) => {
@@ -16,11 +17,21 @@ export const TermsGate = ({ children }: { children: ReactNode }) => {
   const [agreed, setAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+
+  const needsAcceptance =
+    !!currentUser &&
+    currentUser.termsVersionAccepted !== CURRENT_TERMS_VERSION;
+
+  // Trap focus inside the dialog. Escape signs out (the only way to "leave"
+  // without accepting). Hook unconditionally so hook order stays stable.
+  useFocusTrap(dialogRef, {
+    active: needsAcceptance,
+    onEscape: needsAcceptance ? signOut : undefined,
+  });
 
   if (!currentUser) return <>{children}</>;
-  if (currentUser.termsVersionAccepted === CURRENT_TERMS_VERSION) {
-    return <>{children}</>;
-  }
+  if (!needsAcceptance) return <>{children}</>;
 
   const onAccept = async () => {
     if (!agreed || submitting) return;
@@ -40,8 +51,16 @@ export const TermsGate = ({ children }: { children: ReactNode }) => {
 
   return (
     <div className={styles.wrap}>
-      <div className={styles.card}>
-        <h1 className={styles.title}>Before you get started</h1>
+      <div
+        className={styles.card}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="terms-gate-title"
+        ref={dialogRef}
+      >
+        <h1 id="terms-gate-title" className={styles.title}>
+          Before you get started
+        </h1>
         <p className={styles.lede}>
           Birdbrain Roadmaps is a free, open-source side project. Please take a
           minute to review how it works before you continue.

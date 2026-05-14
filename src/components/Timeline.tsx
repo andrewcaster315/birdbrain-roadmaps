@@ -37,6 +37,7 @@ import {
 import { useData } from "../data/DataContext";
 import { useAuth } from "../auth/AuthContext";
 import type { DataService } from "../data/service";
+import { pushToast } from "./Toaster";
 import styles from "./Timeline.module.css";
 
 // Small inline lock icon — used to mark items that are read-only on the
@@ -398,14 +399,14 @@ export const Timeline = ({
         try {
           service.updateItem(d.itemId, patch, null);
         } catch (err) {
-          alert((err as Error).message);
+          pushToast({ kind: "error", message: (err as Error).message });
         }
       }
       if (d.kind === "move" && d.curSwimlaneId !== d.origSwimlaneId) {
         try {
           service.setItemSwimlane(d.itemId, currentRoadmapId, d.curSwimlaneId);
         } catch (err) {
-          alert((err as Error).message);
+          pushToast({ kind: "error", message: (err as Error).message });
         }
       }
     }
@@ -428,6 +429,24 @@ export const Timeline = ({
     if (dx === 0) return;
     if (e.shiftKey) dx *= 7;
     e.preventDefault();
+    // Modifier rules:
+    //   Arrow alone:     move (shift start AND end)
+    //   Alt + Arrow:     resize the end (lengthen / shorten on the right)
+    //   Cmd/Meta + Arrow: resize the start (lengthen / shorten on the left)
+    // This gives keyboard users parity with the mouse resize handles.
+    if (e.altKey) {
+      const end = addDaysISO(item.endDate, dx);
+      // Don't let end go before start.
+      if (end < item.startDate) return;
+      service.updateItem(item.id, { endDate: end }, null);
+      return;
+    }
+    if (e.metaKey || e.ctrlKey) {
+      const start = addDaysISO(item.startDate, dx);
+      if (start > item.endDate) return;
+      service.updateItem(item.id, { startDate: start }, null);
+      return;
+    }
     const start = addDaysISO(item.startDate, dx);
     const end = addDaysISO(item.endDate, dx);
     service.updateItem(item.id, { startDate: start, endDate: end }, null);
@@ -862,7 +881,12 @@ export const Timeline = ({
                             tabIndex={0}
                             aria-label={`${r.item.title}, ${r.item.status}, ${start} to ${end}${
                               r.viaSubscription ? ", via subscription" : ""
-                            }. Press Enter to edit.`}
+                            }. Press Enter to edit. Arrow keys to move; Alt+Arrow to resize the end; Cmd+Arrow to resize the start.`}
+                            aria-keyshortcuts={
+                              r.item.homeRoadmapId === currentRoadmapId
+                                ? "Enter ArrowLeft ArrowRight Shift+ArrowLeft Shift+ArrowRight Alt+ArrowLeft Alt+ArrowRight Meta+ArrowLeft Meta+ArrowRight"
+                                : "Enter"
+                            }
                             title={`${r.item.title} (${start} → ${end})${
                               r.viaSubscription ? " — via subscription" : ""
                             }`}
@@ -1094,7 +1118,16 @@ const ItemListView = ({
               onClick={() => onItemClick(r.item)}
               role="cell"
             >
-              {r.item.title}
+              <span>
+                {r.item.title}
+                <span
+                  className={`${styles.statusChip} ${styles.mobileStatusChip}`}
+                  style={statusStyle(statuses, r.item.status)}
+                  aria-hidden="true"
+                >
+                  {r.item.status}
+                </span>
+              </span>
               {r.viaSubscription && (
                 <span className={styles.subBadge}>via subscription</span>
               )}

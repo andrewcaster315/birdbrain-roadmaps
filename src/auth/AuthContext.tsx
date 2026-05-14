@@ -13,6 +13,7 @@ import * as Sentry from "@sentry/react";
 import type { User } from "../types";
 import { mockService } from "../data/mockService";
 import { supabase, supabaseEnabled } from "../data/supabaseClient";
+import { pushToast } from "../components/Toaster";
 
 const STORAGE_KEY = "roadmapping-tool/auth/v4";
 const TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -76,9 +77,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const MAX_ATTEMPTS = 3;
       const fetchUser = async (attempt = 0) => {
         if (cancelled) return;
-        const {
-          data: { session },
-        } = await sb.auth.getSession();
+        // Defensive: getSession itself can fail (rate-limit, network blip,
+        // mis-configured Supabase URL). Previously we awaited the destructure
+        // and any throw would leave authResolved=false forever — the app
+        // hung on LoadingScreen.
+        let session = null;
+        try {
+          const res = await sb.auth.getSession();
+          session = res.data?.session ?? null;
+        } catch (err) {
+          console.error("[auth] getSession failed:", err);
+          Sentry.captureException(err);
+          pushToast({
+            kind: "error",
+            message:
+              "Couldn't check your sign-in status. Try refreshing the page.",
+          });
+          setAuthResolved(true);
+          return;
+        }
         if (!session) {
           setCurrentUser(null);
           Sentry.setUser(null);
@@ -99,6 +116,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           console.warn(
             "[auth] No public.users row for current session after retries. Signing out."
           );
+          Sentry.captureMessage(
+            "Auth row missing after retries; forced sign-out",
+            "warning"
+          );
+          pushToast({
+            kind: "error",
+            message:
+              "We couldn't load your account. You've been signed out — please request a new sign-in link.",
+            ttlMs: 0, // sticky — they'll only see this once and need to act
+          });
           await sb.auth.signOut();
           setCurrentUser(null);
           Sentry.setUser(null);
@@ -155,9 +182,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const user = mockService.createOrFindUser(email);
     const token =
       Math.random().toString(36).slice(2) + Date.now().toString(36);
+    // Sweep expired tokens before inserting a new one so the map doesn't
+    // grow unbounded across a long-lived session.
+    const now = Date.now();
+    for (const [t, info] of pendingMockTokens) {
+      if (info.expiresAt < now) pendingMockTokens.delete(t);
+    }
     pendingMockTokens.set(token, {
       email: user.email,
-      expiresAt: Date.now() + 15 * 60 * 1000,
+      expiresAt: now + 15 * 60 * 1000,
     });
     return { email: user.email, token };
   };

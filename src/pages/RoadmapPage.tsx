@@ -11,6 +11,8 @@ import { SwimlaneManager } from "../components/SwimlaneManager";
 import { MarkerManager } from "../components/MarkerManager";
 import { InlineEdit } from "../components/InlineEdit";
 import { FavoriteStar } from "../components/FavoriteStar";
+import { confirmDialog } from "../components/ConfirmDialog";
+import { pushToast } from "../components/Toaster";
 import {
   emptyFilterState,
   type RoadmapFilterState,
@@ -63,12 +65,14 @@ export const RoadmapPage = () => {
       currentUser?.id ?? null
     );
 
-  const onDeleteRoadmap = () => {
-    if (
-      confirm(
-        `Delete roadmap "${roadmap.name}"? You can restore it from Trash within 30 days.`
-      )
-    ) {
+  const onDeleteRoadmap = async () => {
+    const ok = await confirmDialog({
+      title: `Delete roadmap "${roadmap.name}"?`,
+      message: "You can restore it from Trash within 30 days.",
+      confirmLabel: "Delete",
+      variant: "danger",
+    });
+    if (ok) {
       service.deleteRoadmap(roadmap.id, currentUser?.id ?? null);
       navigate(group ? `/groups/${group.id}` : "/");
     }
@@ -156,19 +160,23 @@ export const RoadmapPage = () => {
         markers={markers}
         onItemClick={(it) => setEditingItem(it)}
         onItemShare={(it) => setSharingItem(it)}
-        onItemRemove={(it, viaSubscription) => {
+        onItemRemove={async (it, viaSubscription) => {
           if (viaSubscription) return;
           if (it.homeRoadmapId === roadmap.id) {
-            alert(
-              "This is the item's home roadmap. Use Delete item to remove it everywhere."
-            );
+            pushToast({
+              kind: "error",
+              message:
+                "This is the item's home roadmap. Use Delete item to remove it everywhere.",
+            });
             return;
           }
-          if (
-            confirm(
-              `Remove "${it.title}" from this roadmap? It still exists on its home roadmap.`
-            )
-          ) {
+          const ok = await confirmDialog({
+            title: `Remove "${it.title}" from this roadmap?`,
+            message: "It still exists on its home roadmap.",
+            confirmLabel: "Remove",
+            variant: "danger",
+          });
+          if (ok) {
             service.removePlacement(it.id, roadmap.id);
           }
         }}

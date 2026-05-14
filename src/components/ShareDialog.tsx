@@ -1,6 +1,8 @@
-import { useEffect } from "react";
+import { useRef } from "react";
 import { useData } from "../data/DataContext";
 import type { Item } from "../types";
+import { useFocusTrap } from "../utils/useFocusTrap";
+import { pushToast } from "./Toaster";
 import styles from "./ShareDialog.module.css";
 
 type Props = {
@@ -15,21 +17,16 @@ export const ShareDialog = ({ item, currentRoadmapId, onClose }: Props) => {
   const homeRoadmap = service.getRoadmap(item.homeRoadmapId);
 
   const candidates = allRoadmaps.filter((r) => r.id !== item.homeRoadmapId);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  useFocusTrap(dialogRef, { onEscape: onClose });
 
   const toggle = (roadmapId: string) => {
     if (service.isItemSharedTo(item.id, roadmapId)) {
       try {
         service.removePlacement(item.id, roadmapId);
       } catch (err) {
-        alert((err as Error).message);
+        pushToast({ kind: "error", message: (err as Error).message });
       }
     } else {
       service.shareItemTo(item.id, roadmapId);
@@ -44,6 +41,7 @@ export const ShareDialog = ({ item, currentRoadmapId, onClose }: Props) => {
         role="dialog"
         aria-modal="true"
         aria-labelledby="share-title"
+        ref={dialogRef}
       >
         <h2 id="share-title" className={styles.title}>
           Share item

@@ -22,6 +22,10 @@ type Listener = (toasts: Toast[]) => void;
 
 const subscribers = new Set<Listener>();
 let toasts: Toast[] = [];
+// Tracks the active dismissal timer for each toast so manual dismissal
+// can clear it (avoids the timer firing on an already-removed toast,
+// which is harmless but wasteful).
+const dismissTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
 const notify = () => {
   for (const cb of subscribers) cb(toasts);
@@ -44,12 +48,20 @@ export const pushToast = (input: {
   toasts = [...toasts, t];
   notify();
   if (ttlMs > 0) {
-    setTimeout(() => dismissToast(t.id), ttlMs);
+    dismissTimers.set(
+      t.id,
+      setTimeout(() => dismissToast(t.id), ttlMs)
+    );
   }
   return t.id;
 };
 
 export const dismissToast = (id: string) => {
+  const timer = dismissTimers.get(id);
+  if (timer) {
+    clearTimeout(timer);
+    dismissTimers.delete(id);
+  }
   toasts = toasts.filter((t) => t.id !== id);
   notify();
 };

@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useData } from "../data/DataContext";
 import { useAuth } from "../auth/AuthContext";
 import { InlineEdit } from "./InlineEdit";
+import { useFocusTrap } from "../utils/useFocusTrap";
+import { confirmDialog } from "./ConfirmDialog";
 import styles from "./SwimlaneManager.module.css";
 
 type Props = {
@@ -18,13 +20,7 @@ export const SwimlaneManager = ({ roadmapId, onClose }: Props) => {
   const [error, setError] = useState<string | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  useFocusTrap(dialogRef, { onEscape: onClose });
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,12 +39,14 @@ export const SwimlaneManager = ({ roadmapId, onClose }: Props) => {
     }
   };
 
-  const onDelete = (id: string, laneName: string) => {
-    if (
-      confirm(
-        `Delete swimlane "${laneName}"? Items in this lane will move to Unassigned.`
-      )
-    ) {
+  const onDelete = async (id: string, laneName: string) => {
+    const ok = await confirmDialog({
+      title: `Delete swimlane "${laneName}"?`,
+      message: "Items in this lane will move to Unassigned.",
+      confirmLabel: "Delete",
+      variant: "danger",
+    });
+    if (ok) {
       service.deleteSwimlane(id, currentUser?.id ?? null);
     }
   };

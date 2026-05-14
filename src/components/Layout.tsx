@@ -2,6 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import { type ReactNode } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { useData } from "../data/DataContext";
+import { confirmDialog } from "./ConfirmDialog";
 import styles from "./Layout.module.css";
 
 const formatExpiry = (ts: number | null): string => {
@@ -65,9 +66,13 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           </span>
           <button
             className={styles.linkButton}
-            onClick={() => {
-              if (confirm("Reset all data to the demo seed?"))
-                service.resetToSeed();
+            onClick={async () => {
+              const ok = await confirmDialog({
+                title: "Reset all data to the demo seed?",
+                confirmLabel: "Reset",
+                variant: "danger",
+              });
+              if (ok) service.resetToSeed();
             }}
             title="Reset to demo data"
           >

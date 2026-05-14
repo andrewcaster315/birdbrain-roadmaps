@@ -30,7 +30,7 @@
   color: var(--color-text);
   background: #fff;
 }
-.input:focus, .textarea:focus {
+.input:focus-visible, .textarea:focus-visible {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(31, 56, 100, 0.15);
@@ -38,7 +38,7 @@
 .textarea { resize: vertical; min-height: 60px; font-family: inherit; }
 
 .row { display: flex; gap: 12px; }
-@media (max-width: 480px) { .row { flex-direction: column; } }
+@media (max-width: 540px) { .row { flex-direction: column; } }
 
 .error {
   background: var(--color-danger-bg);

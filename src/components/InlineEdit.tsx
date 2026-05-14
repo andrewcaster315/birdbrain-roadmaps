@@ -2,6 +2,7 @@
 // when activated, commits on blur or Enter, cancels on Escape.
 
 import { useEffect, useRef, useState } from "react";
+import { pushToast } from "./Toaster";
 import styles from "./InlineEdit.module.css";
 
 type Props = {
@@ -46,7 +47,7 @@ export const InlineEdit = ({
       try {
         onCommit(next);
       } catch (err) {
-        alert((err as Error).message);
+        pushToast({ kind: "error", message: (err as Error).message });
         setDraft(value);
       }
     }

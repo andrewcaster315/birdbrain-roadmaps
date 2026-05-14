@@ -54,7 +54,7 @@
 }
 
 .formGrid { display: flex; gap: 12px; }
-@media (max-width: 480px) { .formGrid { flex-direction: column; } }
+@media (max-width: 540px) { .formGrid { flex-direction: column; } }
 
 .label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--color-text-muted); flex: 1; }
 

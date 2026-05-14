@@ -12,7 +12,7 @@
   flex-wrap: wrap;
 }
 
-.title { font-size: 26px; font-weight: 700; margin: 0; }
+.title { font-size: 24px; font-weight: 700; margin: 0; }
 
 .actions { display: flex; gap: 8px; }
 

@@ -4,6 +4,7 @@ import { SignIn } from "./auth/SignIn";
 import { Layout } from "./components/Layout";
 import { TermsGate } from "./components/TermsGate";
 import { Toaster } from "./components/Toaster";
+import { ConfirmDialogHost } from "./components/ConfirmDialog";
 import { HomePage } from "./pages/HomePage";
 import { GroupPage } from "./pages/GroupPage";
 import { RoadmapPage } from "./pages/RoadmapPage";
@@ -133,5 +134,9 @@ export const App = () => (
     {/* Global toast surface — used by the service layer to flag failed
         background saves the user would otherwise never see. */}
     <Toaster />
+    {/* In-app confirmation dialogs for destructive actions (replaces
+        window.confirm). Renders nothing until something calls
+        confirmDialog(...). */}
+    <ConfirmDialogHost />
   </>
 );

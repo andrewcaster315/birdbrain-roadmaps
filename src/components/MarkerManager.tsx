@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useData } from "../data/DataContext";
 import { useAuth } from "../auth/AuthContext";
 import { MARKER_COLORS } from "../types";
 import type { Marker } from "../types";
 import { todayISO, formatDate } from "../utils/dates";
+import { useFocusTrap } from "../utils/useFocusTrap";
+import { confirmDialog } from "./ConfirmDialog";
 import styles from "./MarkerManager.module.css";
 
 type Props = {
@@ -20,14 +22,9 @@ export const MarkerManager = ({ roadmapId, onClose }: Props) => {
   const [label, setLabel] = useState("");
   const [color, setColor] = useState<string>(MARKER_COLORS[0]);
   const [error, setError] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  useFocusTrap(dialogRef, { onEscape: onClose });
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,8 +43,13 @@ export const MarkerManager = ({ roadmapId, onClose }: Props) => {
     }
   };
 
-  const onDelete = (m: Marker) => {
-    if (confirm(`Delete marker "${m.label || formatDate(m.date)}"?`)) {
+  const onDelete = async (m: Marker) => {
+    const ok = await confirmDialog({
+      title: `Delete marker "${m.label || formatDate(m.date)}"?`,
+      confirmLabel: "Delete",
+      variant: "danger",
+    });
+    if (ok) {
       service.deleteMarker(m.id, currentUser?.id ?? null);
     }
   };
@@ -60,6 +62,7 @@ export const MarkerManager = ({ roadmapId, onClose }: Props) => {
         role="dialog"
         aria-modal="true"
         aria-labelledby="marker-title"
+        ref={dialogRef}
       >
         <h2 id="marker-title" className={styles.title}>
           Important dates

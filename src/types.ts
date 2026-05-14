@@ -16,11 +16,15 @@ export interface StatusDef {
   position: number;
 }
 
+// Status chip colors are used with white text at small (~10px) uppercase
+// font, which is "small text" for WCAG contrast purposes (needs 4.5:1).
+// Slightly darker shades than the global CSS variables for Planned and On
+// Hold so the chips pass AA contrast.
 export const DEFAULT_STATUSES: Omit<StatusDef, "id">[] = [
-  { name: "Planned", color: "#64748b", position: 0 },
+  { name: "Planned", color: "#475569", position: 0 },
   { name: "In Progress", color: "#2563eb", position: 1 },
   { name: "Done", color: "#047857", position: 2 },
-  { name: "On Hold", color: "#b45309", position: 3 },
+  { name: "On Hold", color: "#92400e", position: 3 },
   { name: "Cancelled", color: "#4b5563", position: 4 },
 ];
 

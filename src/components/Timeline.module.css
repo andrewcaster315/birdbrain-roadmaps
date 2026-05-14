@@ -263,7 +263,7 @@
   cursor: pointer;
   text-align: left;
   font-weight: 600;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 .addLaneBtn:hover {
   background: rgba(31, 56, 100, 0.05);
@@ -311,7 +311,7 @@
    visible if the user vertically scrolls long lane lists in the future. */
 .markerStrip {
   display: flex;
-  background: #fef6e7;
+  background: #f1f4f8;
   border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
@@ -319,7 +319,7 @@
 }
 
 .markerStripGutter {
-  background: #fef6e7;
+  background: #f1f4f8;
   display: flex;
   align-items: center;
   padding: 0;
@@ -337,14 +337,14 @@
   border: none;
   font-size: 11px;
   font-weight: 700;
-  color: #7a4a07;
+  color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   cursor: pointer;
   text-align: left;
 }
 .markerGutterBtn:hover {
-  background: rgba(217, 119, 6, 0.1);
+  background: rgba(31, 56, 100, 0.08);
 }
 .markerGutterBtn:focus-visible {
   outline: 2px solid var(--color-primary);
@@ -354,7 +354,7 @@
 .markerAddIcon {
   font-size: 16px;
   font-weight: 400;
-  color: #b45309;
+  color: var(--color-primary);
 }
 
 .todayLabel,
@@ -383,7 +383,7 @@
   color: #fff;
   font-size: 10px;
   padding: 0 6px;
-  border-radius: 3px;
+  border-radius: 4px;
   font-weight: 700;
   white-space: nowrap;
   max-width: 140px;
@@ -575,7 +575,7 @@
   width: 100%;
   background: #fff;
   border: 1px solid transparent;
-  border-radius: 5px;
+  border-radius: 6px;
   padding: 4px 6px;
   font-size: 12px;
   cursor: pointer;
@@ -607,7 +607,7 @@
 .inlineDate {
   background: #fff;
   border: 1px solid transparent;
-  border-radius: 5px;
+  border-radius: 6px;
   padding: 3px 6px;
   font-size: 11px;
   font-family: inherit;
@@ -635,7 +635,7 @@
 .actionBtn {
   background: #fff;
   border: 1px solid var(--color-border);
-  border-radius: 5px;
+  border-radius: 6px;
   padding: 4px 10px;
   font-size: 12px;
   cursor: pointer;
@@ -645,12 +645,24 @@
 .actionBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 .actionBtn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
 
-@media (max-width: 720px) {
+/* Tablets and large phones — keep the full editing table visible.
+   We previously collapsed at 720px which was too aggressive (768px iPads
+   lost inline editing). 540px keeps the table on most tablets. */
+@media (max-width: 540px) {
   .itemListHeader { grid-template-columns: 78px 1fr auto; }
   .itemListRow { grid-template-columns: 78px 1fr auto; }
   .cellHide { display: none; }
   .laneLabel, .laneGutter { width: 110px; }
   .priSource { display: none; }
+  /* Show status chip inline with the title so phone users still see it. */
+  .mobileStatusChip { display: inline-block; }
+}
+.mobileStatusChip {
+  display: none;
+  margin-left: 8px;
+  font-size: 9px;
+  padding: 2px 6px;
+  vertical-align: middle;
 }
 
 @media (prefers-reduced-motion: reduce) {

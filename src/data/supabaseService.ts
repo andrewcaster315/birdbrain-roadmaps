@@ -228,13 +228,10 @@ export class SupabaseService implements DataService {
   private loaded = false;
   public ready: Promise<void>;
 
-  // Called when a background mutation fails. The default surfaces an alert;
-  // can be overridden by the caller.
+  // Called when a background mutation fails. The default just logs; the
+  // DataContext overrides this to surface a toast in the UI.
   public onError: (message: string) => void = (msg) => {
     console.error("[SupabaseService]", msg);
-    if (typeof window !== "undefined") {
-      window.alert("Save failed: " + msg);
-    }
   };
 
   constructor(private supabase: SupabaseClient) {
@@ -273,9 +270,31 @@ export class SupabaseService implements DataService {
       sb.from("markers").select(),
     ]);
 
-    if (settingsR.error || usersR.error || groupsR.error || roadmapsR.error) {
-      const err = settingsR.error || usersR.error || groupsR.error || roadmapsR.error;
-      this.onError(err?.message ?? "Failed to load data");
+    // Check every table — previously only the first 4 were inspected, which
+    // meant a failure on items/placements/etc. silently produced an empty
+    // dataset and left `loaded` flipped to true.
+    const tableResults: Array<[string, { error: unknown }]> = [
+      ["settings", settingsR],
+      ["users", usersR],
+      ["groups", groupsR],
+      ["roadmaps", roadmapsR],
+      ["swimlanes", swimlanesR],
+      ["items", itemsR],
+      ["placements", placementsR],
+      ["subscribed_item_lane_prefs", lanePrefsR],
+      ["roadmap_subscriptions", subsR],
+      ["favorites", favoritesR],
+      ["markers", markersR],
+    ];
+    const failed = tableResults.find(([, r]) => r.error);
+    if (failed) {
+      const [name, r] = failed;
+      const msg = (r.error as { message?: string })?.message ?? "unknown error";
+      this.onError(`Failed to load ${name}: ${msg}`);
+      // Still mark loaded so the UI doesn't hang on the loading screen
+      // forever; the toast tells the user something is wrong.
+      this.loaded = true;
+      this.notify();
       return;
     }
 
@@ -1177,7 +1196,23 @@ export class SupabaseService implements DataService {
           .from("items")
           .update({ priority: bNext.priority, updated_by_id: actorId })
           .eq("id", b.id);
-        return { error: e2 };
+        if (e2) {
+          // Compensating undo of e1's write so the DB doesn't end up with
+          // two items at the same priority. Best-effort.
+          await this.supabase
+            .from("items")
+            .update({ priority: a.priority, updated_by_id: actorId })
+            .eq("id", a.id)
+            .then(({ error }) => {
+              if (error)
+                console.error(
+                  "[supabaseService] moveItemPriority compensating undo failed:",
+                  error
+                );
+            });
+          return { error: e2 };
+        }
+        return { error: null };
       }
     );
   }
@@ -1365,7 +1400,20 @@ export class SupabaseService implements DataService {
         const r1 = await writeOne(a, aTarget);
         if (r1.error) return { error: r1.error };
         const r2 = await writeOne(b, bTarget);
-        return { error: r2.error };
+        if (r2.error) {
+          // Compensating write: r1 already persisted; undo it server-side
+          // so the database doesn't diverge from the rolled-back cache.
+          // Best-effort — if this also fails the user will see r2's error
+          // and the diverged state will reconcile on next refresh.
+          await writeOne(a, a.localPriority).catch((err) => {
+            console.error(
+              "[supabaseService] moveLocalPriority compensating undo failed:",
+              err
+            );
+          });
+          return { error: r2.error };
+        }
+        return { error: null };
       }
     );
     void actorId; // audit-log entries for local-priority moves aren't persisted server-side yet.

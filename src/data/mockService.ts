@@ -40,28 +40,28 @@ const ensureShape = (raw: any): DataSnapshot => {
     ...raw,
     subscribedItemLanePrefs: (raw.subscribedItemLanePrefs ?? []).map(
       (p: any) => ({
+        ...p,
         localPriority:
           typeof p.localPriority === "number" ? p.localPriority : null,
-        ...p,
       })
     ),
     audit: raw.audit ?? [],
     items: (raw.items ?? []).map((i: any) => ({
+      ...i,
       dependsOnItemIds: i.dependsOnItemIds ?? [],
       priority: typeof i.priority === "number" ? i.priority : 999,
-      ...i,
     })),
     placements: (raw.placements ?? []).map((p: any) => ({
+      ...p,
       localPriority:
         typeof p.localPriority === "number"
           ? p.localPriority
           : (typeof p.position === "number" ? p.position + 1 : 1),
-      ...p,
     })),
     users: (raw.users ?? []).map((u: any) => ({
+      ...u,
       termsVersionAccepted: u.termsVersionAccepted ?? null,
       termsAcceptedAt: u.termsAcceptedAt ?? null,
-      ...u,
     })),
   };
 };
@@ -70,16 +70,28 @@ const load = (): DataSnapshot => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return ensureShape(JSON.parse(raw));
-  } catch {
-    // ignore
+  } catch (err) {
+    console.warn("[mockService] Failed to read from localStorage:", err);
   }
   const seed = buildSeed();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+  // Best-effort write of the initial seed. If storage is disabled / full,
+  // we still return the in-memory seed so the app boots — changes just
+  // won't persist across reloads in that session.
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+  } catch (err) {
+    console.warn("[mockService] Failed to persist seed to localStorage:", err);
+  }
   return seed;
 };
 
-const save = (snap: DataSnapshot) =>
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(snap));
+const save = (snap: DataSnapshot) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(snap));
+  } catch (err) {
+    console.warn("[mockService] localStorage save failed:", err);
+  }
+};
 
 type Listener = () => void;
 const listeners = new Set<Listener>();

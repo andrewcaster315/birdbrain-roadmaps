@@ -258,7 +258,7 @@
 .activityActor { color: var(--color-primary); font-weight: 600; white-space: nowrap; }
 .activityWhen { color: var(--color-text-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   .activityRow { grid-template-columns: 1fr auto; }
   .activityKind, .activityActor { display: none; }
 }

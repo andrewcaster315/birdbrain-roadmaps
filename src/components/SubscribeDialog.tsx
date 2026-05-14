@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { useData } from "../data/DataContext";
+import { useFocusTrap } from "../utils/useFocusTrap";
 import styles from "./SubscribeDialog.module.css";
 
 type Props = {
@@ -15,14 +16,9 @@ export const SubscribeDialog = ({ roadmapId, onClose }: Props) => {
   const subbed = new Set(service.subscriptionsFor(roadmapId));
   const subscriberIds = new Set(service.subscribersOf(roadmapId));
   const subscribers = allRoadmaps.filter((r) => subscriberIds.has(r.id));
+  const dialogRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  useFocusTrap(dialogRef, { onEscape: onClose });
 
   const toggle = (otherId: string) => {
     if (subbed.has(otherId)) {
@@ -40,6 +36,7 @@ export const SubscribeDialog = ({ roadmapId, onClose }: Props) => {
         role="dialog"
         aria-modal="true"
         aria-labelledby="sub-title"
+        ref={dialogRef}
       >
         <h2 id="sub-title" className={styles.title}>
           Linked roadmaps

@@ -151,7 +151,7 @@
   margin: 0 auto;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 540px) {
   .header { padding: 10px 14px; gap: 8px; }
   .main { padding: 16px; }
   .session { display: none; }
