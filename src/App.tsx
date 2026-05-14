@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useParams } from "react-router-dom";
+import { Routes, Route, Navigate, Link, useParams } from "react-router-dom";
 import { useAuth } from "./auth/AuthContext";
 import { SignIn } from "./auth/SignIn";
 import { Layout } from "./components/Layout";
@@ -10,6 +10,7 @@ import { TrashPage } from "./pages/TrashPage";
 import { AdminPage } from "./pages/AdminPage";
 import { LegalPrivacyPage, LegalTermsPage } from "./pages/LegalPages";
 import { useData } from "./data/DataContext";
+import type { ReactNode } from "react";
 
 const TeamsRedirect = () => {
   const { teamId } = useParams<{ teamId: string }>();
@@ -30,7 +31,56 @@ const LoadingScreen = () => (
   </div>
 );
 
-export const App = () => {
+// Minimal layout for the legal pages — readable without sign-in and without
+// having accepted the Terms. Just a brand link, the content, and a sign-in
+// hint. Anyone, anywhere on the internet, can land on these URLs.
+const PublicLegalLayout = ({ children }: { children: ReactNode }) => (
+  <div
+    style={{
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      background: "var(--color-bg)",
+    }}
+  >
+    <header
+      style={{
+        padding: "16px 24px",
+        borderBottom: "1px solid var(--color-border)",
+        background: "#fff",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <Link
+        to="/"
+        style={{
+          fontWeight: 700,
+          color: "var(--color-primary)",
+          textDecoration: "none",
+        }}
+      >
+        Birdbrain Roadmaps
+      </Link>
+      <Link
+        to="/"
+        style={{
+          fontSize: 13,
+          color: "var(--color-text-muted)",
+          textDecoration: "none",
+        }}
+      >
+        ← Back to app
+      </Link>
+    </header>
+    <main style={{ padding: "24px", maxWidth: 768, margin: "0 auto", width: "100%" }}>
+      {children}
+    </main>
+  </div>
+);
+
+const GatedApp = () => {
   const { isAuthenticated, authResolved } = useAuth();
   const { loaded } = useData();
   // Don't render the sign-in screen until we know whether the user is signed
@@ -48,11 +98,34 @@ export const App = () => {
           <Route path="/roadmaps/:roadmapId" element={<RoadmapPage />} />
           <Route path="/trash" element={<TrashPage />} />
           <Route path="/admin" element={<AdminPage />} />
-          <Route path="/legal/privacy" element={<LegalPrivacyPage />} />
-          <Route path="/legal/terms" element={<LegalTermsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
     </TermsGate>
   );
 };
+
+export const App = () => (
+  <Routes>
+    {/* Legal pages are always public — they live outside both the auth gate
+        and the Terms-acceptance gate so people can read them before signing
+        in and before deciding whether to accept. */}
+    <Route
+      path="/legal/privacy"
+      element={
+        <PublicLegalLayout>
+          <LegalPrivacyPage />
+        </PublicLegalLayout>
+      }
+    />
+    <Route
+      path="/legal/terms"
+      element={
+        <PublicLegalLayout>
+          <LegalTermsPage />
+        </PublicLegalLayout>
+      }
+    />
+    <Route path="*" element={<GatedApp />} />
+  </Routes>
+);

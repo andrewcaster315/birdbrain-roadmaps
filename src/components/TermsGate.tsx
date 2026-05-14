@@ -97,6 +97,11 @@ export const TermsGate = ({ children }: { children: ReactNode }) => {
           </div>
         )}
 
+        <p className={styles.declineHint}>
+          If you decline, you'll be signed out. You can come back and accept
+          anytime.
+        </p>
+
         <div className={styles.actions}>
           <button
             type="button"
@@ -104,7 +109,7 @@ export const TermsGate = ({ children }: { children: ReactNode }) => {
             onClick={signOut}
             disabled={submitting}
           >
-            Sign out
+            Decline
           </button>
           <button
             type="button"
