@@ -67,7 +67,7 @@ export const TermsGate = ({ children }: { children: ReactNode }) => {
           Before you get started
         </h1>
         <p className={styles.lede}>
-          Birdbrain Roadmaps is a free, open-source side project. Please take a
+          Roadmaps is a free, open-source side project. Please take a
           minute to review how it works before you continue.
         </p>
 

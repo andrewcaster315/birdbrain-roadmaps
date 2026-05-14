@@ -1,4 +1,6 @@
-# Birdbrain Roadmaps
+# Roadmaps
+
+*A [Birdbrain Tools](https://birdbrain.tools) project.*
 
 A focused, single-page roadmapping tool for product teams. Built for cross-team rollups: every team owns its own roadmap, and directors (or other PMs) can subscribe to peer roadmaps and reorder shared items locally without affecting the source.
 

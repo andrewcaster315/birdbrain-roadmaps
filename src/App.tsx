@@ -63,7 +63,7 @@ const PublicLegalLayout = ({ children }: { children: ReactNode }) => (
           textDecoration: "none",
         }}
       >
-        Birdbrain Roadmaps
+        Roadmaps
       </Link>
       <Link
         to="/"

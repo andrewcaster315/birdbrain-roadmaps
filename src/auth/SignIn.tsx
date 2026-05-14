@@ -39,7 +39,7 @@ export const SignIn = () => {
   return (
     <div className={styles.wrap}>
       <form className={styles.card} onSubmit={onRequest}>
-        <h1 className={styles.title}>Birdbrain Roadmaps</h1>
+        <h1 className={styles.title}>Roadmaps</h1>
 
         {phase === "enter-email" && (
           <>

@@ -288,7 +288,7 @@ export const HomePage = () => {
 
           {groups.length === 0 ? (
             <section className={styles.welcome}>
-              <h2 className={styles.welcomeTitle}>Welcome to {service.getSettings().orgName || "Roadmaps"}.</h2>
+              <h2 className={styles.welcomeTitle}>Welcome to Roadmaps.</h2>
               <p className={styles.welcomeBody}>
                 You're the first one here. Start by creating a group — that's
                 a team, a program, or a leadership view that owns one or more

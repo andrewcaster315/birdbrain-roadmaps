@@ -14,7 +14,7 @@ export const LegalPrivacyPage = () => (
     </p>
 
     <p>
-      Birdbrain Roadmaps is a free, open-source roadmapping tool offered as a
+      Roadmaps is a free, open-source roadmapping tool offered as a
       personal side project. This page explains what information is collected
       when you use the hosted version at <strong>birdbrain.tools</strong>, how
       it is used, and how to remove it. The source code is available at{" "}
@@ -30,16 +30,17 @@ export const LegalPrivacyPage = () => (
 
     <h2 className={styles.section}>Who runs this service</h2>
     <p>
-      Birdbrain Roadmaps is maintained by a single individual operating
-      birdbrain.tools as a personal open-source project. It is not a registered
-      business and is not affiliated with any employer or organization. If you
-      self-host the code under the MIT License, you operate your own instance
-      and this Privacy Policy does not govern it.
+      Roadmaps is a project of <strong>Birdbrain Tools</strong>, an
+      independent personal project maintained by a single individual at
+      birdbrain.tools. Birdbrain Tools is not a registered business and is
+      not affiliated with any employer or organization. If you self-host
+      the code under the MIT License, you operate your own instance and
+      this Privacy Policy does not govern it.
     </p>
 
     <h2 className={styles.section}>Scope and audience</h2>
     <p>
-      Birdbrain Roadmaps is currently a single-tenant service. Access to the
+      Roadmaps is currently a single-tenant service. Access to the
       hosted instance at birdbrain.tools is restricted to email addresses on
       the <strong>nyulangone.org</strong> domain, the maintainer's own
       account, and any future co-maintainers. NYU Langone Health is the only
@@ -81,7 +82,7 @@ export const LegalPrivacyPage = () => (
 
     <h2 className={styles.section}>Sub-processors</h2>
     <p>
-      Birdbrain Roadmaps relies on the following third-party services to
+      Roadmaps relies on the following third-party services to
       function:
     </p>
     <ul>
@@ -233,7 +234,7 @@ export const LegalTermsPage = () => (
     </p>
 
     <p>
-      Birdbrain Roadmaps is a free, open-source roadmapping tool offered as a
+      Roadmaps is a free, open-source roadmapping tool offered as a
       personal side project. By using <strong>birdbrain.tools</strong>, you
       agree to these terms.
     </p>
@@ -249,7 +250,7 @@ export const LegalTermsPage = () => (
 
     <h2 className={styles.section}>Scope and audience</h2>
     <p>
-      Birdbrain Roadmaps is currently a single-tenant service. Access to the
+      Roadmaps is currently a single-tenant service. Access to the
       hosted instance at birdbrain.tools is restricted to email addresses on
       the <strong>nyulangone.org</strong> domain, the maintainer's own
       account, and any future co-maintainers. NYU Langone Health is the only
@@ -300,7 +301,7 @@ export const LegalTermsPage = () => (
 
     <h2 className={styles.section}>Your content</h2>
     <p>
-      You retain ownership of the content you create on Birdbrain Roadmaps.
+      You retain ownership of the content you create on Roadmaps.
       You grant the maintainer of birdbrain.tools only the limited rights
       necessary to host, display, back up, and deliver that content to you and
       your collaborators. You can export or delete your data at any time.
@@ -311,7 +312,7 @@ export const LegalTermsPage = () => (
       Roadmap data may include confidential information belonging to your
       employer or other parties. You are responsible for ensuring that any
       information you upload may lawfully be placed on a third-party service.
-      Birdbrain Roadmaps does not make confidentiality guarantees beyond
+      Roadmaps does not make confidentiality guarantees beyond
       standard industry practice.
     </p>
 
@@ -321,7 +322,7 @@ export const LegalTermsPage = () => (
       Roadmaps shall not be liable for any direct, indirect, incidental,
       special, consequential, or exemplary damages — including lost profits,
       lost data, business interruption, or other commercial damages — arising
-      from your use of Birdbrain Roadmaps, even if advised of the possibility
+      from your use of Roadmaps, even if advised of the possibility
       of such damages.
     </p>
 

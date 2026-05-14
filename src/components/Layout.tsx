@@ -27,7 +27,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
       </a>
       <header className={styles.header}>
         <Link to="/" className={styles.brand} aria-label="Home">
-          <span>{settings.orgName || "Birdbrain Roadmaps"}</span>
+          <span>{settings.orgName || "Roadmaps"}</span>
         </Link>
         <nav className={styles.nav} aria-label="Primary">
           <NavLink
@@ -109,6 +109,10 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         <Link to="/legal/terms" className={styles.footerLink}>
           Terms
         </Link>
+        <span aria-hidden="true">·</span>
+        <span className={styles.footerAttribution}>
+          a Birdbrain Tools project
+        </span>
       </footer>
     </div>
   );
