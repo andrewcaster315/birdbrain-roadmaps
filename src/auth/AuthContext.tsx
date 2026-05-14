@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import * as Sentry from "@sentry/react";
 import type { User } from "../types";
 import { mockService } from "../data/mockService";
 import { supabase, supabaseEnabled } from "../data/supabaseClient";
@@ -80,6 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } = await sb.auth.getSession();
         if (!session) {
           setCurrentUser(null);
+          Sentry.setUser(null);
           setExpiresAt(null);
           setAuthResolved(true);
           return;
@@ -99,11 +101,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           );
           await sb.auth.signOut();
           setCurrentUser(null);
+          Sentry.setUser(null);
           setExpiresAt(null);
           setAuthResolved(true);
           return;
         }
-        setCurrentUser({
+        const userObj: User = {
           id: row.id,
           email: row.email,
           displayName: row.display_name,
@@ -112,7 +115,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           createdAt: row.created_at,
           updatedAt: row.updated_at,
           deletedAt: row.deleted_at,
-        });
+        };
+        setCurrentUser(userObj);
+        Sentry.setUser({ id: userObj.id, email: userObj.email });
         setExpiresAt((session.expires_at ?? 0) * 1000);
         setAuthResolved(true);
       };
@@ -186,6 +191,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       clearMockSession();
     }
     setCurrentUser(null);
+    Sentry.setUser(null);
     setExpiresAt(null);
   };
 

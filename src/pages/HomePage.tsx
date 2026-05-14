@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useData } from "../data/DataContext";
 import { useAuth } from "../auth/AuthContext";
 import { FavoriteStar } from "../components/FavoriteStar";
+import { GettingStarted } from "../components/GettingStarted";
 import type { ID, Group } from "../types";
 import styles from "./HomePage.module.css";
 
@@ -229,6 +230,9 @@ export const HomePage = () => {
         </section>
       ) : (
         <>
+          {groups.length > 0 && (
+            <GettingStarted hasFavorites={favoriteRoadmaps.length > 0} />
+          )}
           {currentUser && favoriteRoadmaps.length > 0 && (
             <section>
               <h2 className={styles.section}>Your favorites</h2>

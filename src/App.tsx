@@ -3,6 +3,7 @@ import { useAuth } from "./auth/AuthContext";
 import { SignIn } from "./auth/SignIn";
 import { Layout } from "./components/Layout";
 import { TermsGate } from "./components/TermsGate";
+import { Toaster } from "./components/Toaster";
 import { HomePage } from "./pages/HomePage";
 import { GroupPage } from "./pages/GroupPage";
 import { RoadmapPage } from "./pages/RoadmapPage";
@@ -106,26 +107,31 @@ const GatedApp = () => {
 };
 
 export const App = () => (
-  <Routes>
-    {/* Legal pages are always public — they live outside both the auth gate
-        and the Terms-acceptance gate so people can read them before signing
-        in and before deciding whether to accept. */}
-    <Route
-      path="/legal/privacy"
-      element={
-        <PublicLegalLayout>
-          <LegalPrivacyPage />
-        </PublicLegalLayout>
-      }
-    />
-    <Route
-      path="/legal/terms"
-      element={
-        <PublicLegalLayout>
-          <LegalTermsPage />
-        </PublicLegalLayout>
-      }
-    />
-    <Route path="*" element={<GatedApp />} />
-  </Routes>
+  <>
+    <Routes>
+      {/* Legal pages are always public — they live outside both the auth
+          gate and the Terms-acceptance gate so people can read them before
+          signing in and before deciding whether to accept. */}
+      <Route
+        path="/legal/privacy"
+        element={
+          <PublicLegalLayout>
+            <LegalPrivacyPage />
+          </PublicLegalLayout>
+        }
+      />
+      <Route
+        path="/legal/terms"
+        element={
+          <PublicLegalLayout>
+            <LegalTermsPage />
+          </PublicLegalLayout>
+        }
+      />
+      <Route path="*" element={<GatedApp />} />
+    </Routes>
+    {/* Global toast surface — used by the service layer to flag failed
+        background saves the user would otherwise never see. */}
+    <Toaster />
+  </>
 );
