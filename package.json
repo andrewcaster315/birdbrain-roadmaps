@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Birdbrain Roadmaps — collaborative roadmapping for product teams",
   "license": "MIT",
-  "author": "Andrew Caster",
+  "author": "andrewcaster315",
   "homepage": "https://birdbrain.tools",
   "scripts": {
     "dev": "vite",
